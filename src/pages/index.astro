@@ -1,4 +1,6 @@
 ---
+// TODO: Make a simple version using names and pre-defined values
+// TODO: Create a mini hub page to display both types of calculators
 import Layout from "~/layouts/base.astro";
 ---
 
@@ -6,7 +8,7 @@ import Layout from "~/layouts/base.astro";
     const BASE_DAMAGE = document.getElementById("base-damage") as HTMLInputElement;
 
     interface EquipmentMultiplierElements {
-        attack: HTMLInputElement;
+        increasedDamage: HTMLInputElement;
         criticalChance: HTMLInputElement;
         criticalDamage: HTMLInputElement;
         cooldownReduction: HTMLInputElement;
@@ -14,13 +16,13 @@ import Layout from "~/layouts/base.astro";
 
     const EQUIPMENT: EquipmentMultiplierElements[] = [
         {
-            attack: document.getElementById("attack-multiplier-1") as HTMLInputElement,
+            increasedDamage: document.getElementById("increased-damage-1") as HTMLInputElement,
             criticalChance: document.getElementById("critical-chance-1") as HTMLInputElement,
             criticalDamage: document.getElementById("critical-multiplier-1") as HTMLInputElement,
             cooldownReduction: document.getElementById("cooldown-reduction-1") as HTMLInputElement,
         },
         {
-            attack: document.getElementById("attack-multiplier-2") as HTMLInputElement,
+            increasedDamage: document.getElementById("increased-damage-2") as HTMLInputElement,
             criticalChance: document.getElementById("critical-chance-2") as HTMLInputElement,
             criticalDamage: document.getElementById("critical-multiplier-2") as HTMLInputElement,
             cooldownReduction: document.getElementById("cooldown-reduction-2") as HTMLInputElement,
@@ -51,6 +53,8 @@ import Layout from "~/layouts/base.astro";
 
     const isEmpty = (text: string) => !text;
 
+    // TODO: Allow decimals for base damage and only positive integers for
+    // multipliers
     const isValidNumber = (contents: string) => {
         const IS_NUMBER = /^[0-9.]*$/;
 
@@ -109,7 +113,7 @@ import Layout from "~/layouts/base.astro";
         const cooldownReduction = s;
         const totalDamageMultiplier =
             (1 + attackMultiplier) *
-            (criticalChance * (criticalDamage + 0.5) + (1 - criticalChance)) *
+            (criticalChance * (criticalDamage + 1.5) + (1 - criticalChance)) *
             ((1 / (1 - cooldownReduction[0])) * (1 / (1 - cooldownReduction[1])));
         // TODO: Make prettier
         const prettyTotalDamage = prettifyNumber(baseDamage * totalDamageMultiplier, 1);
@@ -174,7 +178,7 @@ import Layout from "~/layouts/base.astro";
     BASE_DAMAGE.addEventListener("input", displayCalculatedDamage);
 
     for (const multipliers of EQUIPMENT) {
-        multipliers.attack.addEventListener("input", trackAttackMultipliers);
+        multipliers.increasedDamage.addEventListener("input", trackAttackMultipliers);
         multipliers.criticalChance.addEventListener("input", trackCriticalChances);
         multipliers.criticalDamage.addEventListener("input", trackCriticalDamageMultipliers);
         multipliers.cooldownReduction.addEventListener("input", trackCooldownReductions);
@@ -187,14 +191,15 @@ import Layout from "~/layouts/base.astro";
     <input id="base-damage" min={1} placeholder="Base damage" />
 
     <div class="box-border flex flex-col gap-2 p-4">
-        <input id="attack-multiplier-1" min={0} placeholder="Attack multiplier" />
+        <!-- TODO: Add percentage labels -->
+        <input id="increased-damage-1" min={0} placeholder="Increased damage" />
         <input id="critical-chance-1" min={0} max={100} placeholder="Critical chance" />
         <input id="critical-multiplier-1" min={0} placeholder="Critical damage multiplier" />
         <input id="cooldown-reduction-1" min={0} max={50} placeholder="Cooldown reduction" />
     </div>
 
     <div class="box-border flex flex-col gap-2 p-4">
-        <input id="attack-multiplier-2" min={0} placeholder="Attack multiplier" />
+        <input id="increased-damage-2" min={0} placeholder="Increased damage" />
         <input id="critical-chance-2" min={0} max={100} placeholder="Critical chance" />
         <input id="critical-multiplier-2" min={0} placeholder="Critical damage multiplier" />
         <input id="cooldown-reduction-2" min={0} max={50} placeholder="Cooldown reduction" />
