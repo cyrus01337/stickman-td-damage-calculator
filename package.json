@@ -1,0 +1,41 @@
+{
+    "name": "astro-app-boilerplate",
+    "type": "module",
+    "version": "0.1.0",
+    "scripts": {
+        "dev": "astro dev",
+        "start": "astro dev",
+        "build": "eslint . && astro build",
+        "preview": "astro preview",
+        "astro": "astro",
+        "format": "prettier --write .",
+        "lint": "eslint .",
+        "prepare": "husky"
+    },
+    "dependencies": {
+        "@astrojs/check": "^0.7.0",
+        "@astrojs/tailwind": "^5.1.0",
+        "astro": "^4.11.1",
+        "tailwindcss": "^3.4.4",
+        "typescript": "^5.5.2"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.5.0",
+        "@fontsource-variable/inter-tight": "^5.0.21",
+        "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
+        "@types/eslint__js": "^8.42.3",
+        "cssnano": "^7.0.3",
+        "daisyui": "^4.12.8",
+        "eslint": "^9.5.0",
+        "eslint-config-prettier": "^9.1.0",
+        "eslint-plugin-astro": "^1.2.2",
+        "husky": "^9.0.11",
+        "lint-staged": "^15.2.7",
+        "prettier": "^3.3.2",
+        "prettier-plugin-astro": "^0.14.0",
+        "prettier-plugin-sort-json": "^4.0.0",
+        "prettier-plugin-tailwindcss": "^0.6.5",
+        "tsc-files": "^1.1.4",
+        "typescript-eslint": "^8.0.0-alpha.52"
+    }
+}
