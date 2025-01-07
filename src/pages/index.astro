@@ -2,6 +2,203 @@
 import Layout from "~/layouts/base.astro";
 ---
 
-<Layout>
-    <main>Hello, world!</main>
+<script>
+    const BASE_DAMAGE = document.getElementById("base-damage") as HTMLInputElement;
+
+    interface EquipmentMultiplierElements {
+        attack: HTMLInputElement;
+        criticalChance: HTMLInputElement;
+        criticalDamage: HTMLInputElement;
+        cooldownReduction: HTMLInputElement;
+    }
+
+    const EQUIPMENT: EquipmentMultiplierElements[] = [
+        {
+            attack: document.getElementById("attack-multiplier-1") as HTMLInputElement,
+            criticalChance: document.getElementById("critical-chance-1") as HTMLInputElement,
+            criticalDamage: document.getElementById("critical-multiplier-1") as HTMLInputElement,
+            cooldownReduction: document.getElementById("cooldown-reduction-1") as HTMLInputElement,
+        },
+        {
+            attack: document.getElementById("attack-multiplier-2") as HTMLInputElement,
+            criticalChance: document.getElementById("critical-chance-2") as HTMLInputElement,
+            criticalDamage: document.getElementById("critical-multiplier-2") as HTMLInputElement,
+            cooldownReduction: document.getElementById("cooldown-reduction-2") as HTMLInputElement,
+        },
+    ];
+
+    interface EquipmentMultiplierDefaults {
+        baseDamage: number;
+        attack: number;
+        criticalChance: number;
+        criticalDamage: number;
+        cooldownReduction: number;
+    }
+
+    const DEFAULTS: EquipmentMultiplierDefaults = {
+        baseDamage: 0,
+        attack: 0,
+        criticalChance: 0,
+        criticalDamage: 0,
+        cooldownReduction: 0,
+    };
+
+    const OUTPUT = document.getElementById("output") as HTMLSpanElement;
+    const i = [0, 0];
+    const c = [0, 0];
+    const d = [0, 0];
+    const s = [0, 0];
+
+    const isEmpty = (text: string) => !text;
+
+    const isValidNumber = (contents: string) => {
+        const IS_NUMBER = /^[0-9.]*$/;
+
+        return IS_NUMBER.test(contents);
+    };
+
+    // For some reason `event.preventDefault()` was not working so I've resorted
+    // to stripping the contents last character and setting that as the input
+    // element's new value
+    const voidKeypressFor = (inputElement: HTMLInputElement) => {
+        inputElement.value = inputElement.value.slice(0, -1);
+    };
+
+    const processNewInput = (target: HTMLInputElement, fallback: number): [number, number] => {
+        const EXTRACT_INDEX = /[12]$/;
+        const NO_INDEX = -1;
+        const extractionResult = target.id.match(EXTRACT_INDEX);
+        let index = NO_INDEX;
+
+        if (extractionResult !== null) {
+            index = parseInt(extractionResult[0]) - 1;
+        }
+
+        if (isEmpty(target.value)) {
+            return [fallback, index];
+        } else if (!isValidNumber(target.value)) {
+            voidKeypressFor(target);
+
+            return [fallback, index];
+        }
+
+        return [parseFloat(target.value), index];
+    };
+
+    const sum = (numbers: number[]) => numbers.reduce((total, n) => total + n, 0);
+
+    const removeDecimalsIfEquivalent = (number: number) => {
+        const absoluteNumber = Math.abs(number);
+
+        return number === absoluteNumber ? absoluteNumber : number;
+    };
+
+    const round = (number: number, places = 0) => {
+        const multiplier = 10 ** places;
+
+        return Math.round(number * multiplier) / multiplier;
+    };
+
+    const prettifyNumber = (number: number, places: number) =>
+        removeDecimalsIfEquivalent(round(number, places)).toLocaleString("en-GB");
+
+    const applyFormulaTo = (baseDamage: number) => {
+        const attackMultiplier = sum(i);
+        const criticalChance = sum(c);
+        const criticalDamage = sum(d);
+        const cooldownReduction = s;
+        const totalDamageMultiplier =
+            (1 + attackMultiplier) *
+            (criticalChance * (criticalDamage + 0.5) + (1 - criticalChance)) *
+            ((1 / (1 - cooldownReduction[0])) * (1 / (1 - cooldownReduction[1])));
+        // TODO: Make prettier
+        const prettyTotalDamage = prettifyNumber(baseDamage * totalDamageMultiplier, 1);
+        // FIXME: Set to 0 if no values are set
+        const prettyTotalDamageMultiplier = prettifyNumber(totalDamageMultiplier * 100, 2);
+        const additiveTotalDamageMultiplier = prettifyNumber((totalDamageMultiplier - 1) * 100, 2);
+
+        // Maintain for future debugging
+        // console.log("Attack multiplier:", attackMultiplier);
+        // console.log("Critical chance:", criticalChance);
+        // console.log("Critical damage:", criticalDamage);
+        // console.log("Cooldown reduction:", cooldownReduction);
+        // console.log("Total damage multiplier:", totalDamageMultiplier);
+
+        return `${prettyTotalDamage} (${prettyTotalDamageMultiplier}% or +${additiveTotalDamageMultiplier}%)`;
+    };
+
+    const performAndShowCalculation = (target: HTMLInputElement) => {
+        const [damage] = processNewInput(target, DEFAULTS.baseDamage);
+
+        OUTPUT.textContent = `${applyFormulaTo(damage)}`;
+    };
+
+    const displayCalculatedDamage: EventListener = event => {
+        performAndShowCalculation(event.target as HTMLInputElement);
+    };
+
+    const trackAttackMultipliers: EventListener = event => {
+        const [attackMultiplier, index] = processNewInput(event.target as HTMLInputElement, DEFAULTS.attack);
+        i[index] = attackMultiplier;
+
+        performAndShowCalculation(BASE_DAMAGE);
+    };
+
+    const trackCriticalChances: EventListener = event => {
+        const [criticalChance, index] = processNewInput(event.target as HTMLInputElement, DEFAULTS.criticalChance);
+        c[index] = criticalChance;
+
+        performAndShowCalculation(BASE_DAMAGE);
+    };
+
+    const trackCriticalDamageMultipliers: EventListener = event => {
+        const [criticalDamageMultiplier, index] = processNewInput(
+            event.target as HTMLInputElement,
+            DEFAULTS.criticalDamage,
+        );
+        d[index] = criticalDamageMultiplier;
+
+        performAndShowCalculation(BASE_DAMAGE);
+    };
+
+    const trackCooldownReductions: EventListener = event => {
+        const [cooldownReduction, index] = processNewInput(
+            event.target as HTMLInputElement,
+            DEFAULTS.cooldownReduction,
+        );
+        s[index] = cooldownReduction;
+
+        performAndShowCalculation(BASE_DAMAGE);
+    };
+
+    BASE_DAMAGE.addEventListener("input", displayCalculatedDamage);
+
+    for (const multipliers of EQUIPMENT) {
+        multipliers.attack.addEventListener("input", trackAttackMultipliers);
+        multipliers.criticalChance.addEventListener("input", trackCriticalChances);
+        multipliers.criticalDamage.addEventListener("input", trackCriticalDamageMultipliers);
+        multipliers.cooldownReduction.addEventListener("input", trackCooldownReductions);
+    }
+
+    performAndShowCalculation(BASE_DAMAGE);
+</script>
+
+<Layout class="box-border flex flex-row gap-2 p-4">
+    <input id="base-damage" min={1} placeholder="Base damage" />
+
+    <div class="box-border flex flex-col gap-2 p-4">
+        <input id="attack-multiplier-1" min={0} placeholder="Attack multiplier" />
+        <input id="critical-chance-1" min={0} max={100} placeholder="Critical chance" />
+        <input id="critical-multiplier-1" min={0} placeholder="Critical damage multiplier" />
+        <input id="cooldown-reduction-1" min={0} max={50} placeholder="Cooldown reduction" />
+    </div>
+
+    <div class="box-border flex flex-col gap-2 p-4">
+        <input id="attack-multiplier-2" min={0} placeholder="Attack multiplier" />
+        <input id="critical-chance-2" min={0} max={100} placeholder="Critical chance" />
+        <input id="critical-multiplier-2" min={0} placeholder="Critical damage multiplier" />
+        <input id="cooldown-reduction-2" min={0} max={50} placeholder="Cooldown reduction" />
+    </div>
+
+    <span id="output"></span>
 </Layout>
