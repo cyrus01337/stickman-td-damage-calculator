@@ -1,5 +1,6 @@
 ---
-// TODO: Make a simple version using names and pre-defined values
+// TODO: Make a simple version using auto-completable names and pre-defined
+// values
 // TODO: Create a mini hub page to display both types of calculators
 import Layout from "~/layouts/base.astro";
 ---
@@ -55,6 +56,7 @@ import Layout from "~/layouts/base.astro";
 
     // TODO: Allow decimals for base damage and only positive integers for
     // multipliers
+    // TODO: Allow for negative multipliers in the case of Reaper
     const isValidNumber = (contents: string) => {
         const IS_NUMBER = /^[0-9.]*$/;
 
