@@ -12,7 +12,10 @@
         "",
         "<TYPES>"
     ],
-    "importOrderParserPlugins": ["typescript", "importAssertions"],
+    "importOrderParserPlugins": [
+        "typescript",
+        "importAssertions"
+    ],
     "jsonRecursiveSort": true,
     "overrides": [
         {
@@ -28,6 +31,6 @@
         "prettier-plugin-sort-json",
         "prettier-plugin-tailwindcss"
     ],
-    "printWidth": 100,
+    "printWidth": 120,
     "tabWidth": 4
 }
