@@ -6,6 +6,9 @@ import Layout from "~/layouts/base.astro";
 ---
 
 <script>
+    const IS_NUMBER = /^[0-9]*.?[0-9]*$/;
+    const EXTRACT_INDEX = /[12]$/;
+    const NO_INDEX = -1;
     const BASE_DAMAGE = document.getElementById("base-damage") as HTMLInputElement;
 
     interface EquipmentMultiplierElements {
@@ -57,11 +60,7 @@ import Layout from "~/layouts/base.astro";
     // TODO: Allow decimals for base damage and only positive integers for
     // multipliers
     // TODO: Allow for negative multipliers in the case of Reaper
-    const isValidNumber = (contents: string) => {
-        const IS_NUMBER = /^[0-9.]*$/;
-
-        return IS_NUMBER.test(contents);
-    };
+    const isValidNumber = (contents: string) => IS_NUMBER.test(contents);
 
     // For some reason `event.preventDefault()` was not working so I've resorted
     // to stripping the contents last character and setting that as the input
@@ -71,8 +70,6 @@ import Layout from "~/layouts/base.astro";
     };
 
     const processNewInput = (target: HTMLInputElement, fallback: number): [number, number] => {
-        const EXTRACT_INDEX = /[12]$/;
-        const NO_INDEX = -1;
         const extractionResult = target.id.match(EXTRACT_INDEX);
         let index = NO_INDEX;
 
@@ -152,7 +149,7 @@ import Layout from "~/layouts/base.astro";
 
     const trackCriticalChances: EventListener = event => {
         const [criticalChance, index] = processNewInput(event.target as HTMLInputElement, DEFAULTS.criticalChance);
-        c[index] = criticalChance;
+        c[index] = criticalChance / 100;
 
         performAndShowCalculation(BASE_DAMAGE);
     };
