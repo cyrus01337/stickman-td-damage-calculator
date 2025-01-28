@@ -110,7 +110,7 @@ import Layout from "~/layouts/base.astro";
 
     const applyFormulaTo = (baseDamage: number) => {
         const attackMultiplier = sum(i);
-        const criticalChance = sum(c);
+        const criticalChance = Math.min(sum(c), 1);
         const criticalDamage = sum(d);
         const cooldownReduction = s;
         const totalDamageMultiplier =
@@ -152,7 +152,7 @@ import Layout from "~/layouts/base.astro";
 
     const trackCriticalChances: EventListener = event => {
         const [criticalChance, index] = processNewInput(event.target as HTMLInputElement, DEFAULTS.criticalChance);
-        c[index] = Math.min(criticalChance, 1);
+        c[index] = criticalChance;
 
         performAndShowCalculation(BASE_DAMAGE);
     };
