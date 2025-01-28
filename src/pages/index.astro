@@ -192,20 +192,15 @@ import Layout from "~/layouts/base.astro";
 <Layout class="box-border flex flex-row gap-2 p-4">
     <input id="base-damage" min={1} placeholder="Base damage" />
 
-    <div class="box-border flex flex-col gap-2 p-4">
-        <!-- TODO: Add percentage labels -->
-        <input id="increased-damage-1" min={0} placeholder="Increased damage" />
-        <input id="critical-chance-1" min={0} max={100} placeholder="Critical chance" />
-        <input id="critical-multiplier-1" min={0} placeholder="Critical damage multiplier" />
-        <input id="cooldown-reduction-1" min={0} max={50} placeholder="Cooldown reduction" />
-    </div>
-
-    <div class="box-border flex flex-col gap-2 p-4">
-        <input id="increased-damage-2" min={0} placeholder="Increased damage" />
-        <input id="critical-chance-2" min={0} max={100} placeholder="Critical chance" />
-        <input id="critical-multiplier-2" min={0} placeholder="Critical damage multiplier" />
-        <input id="cooldown-reduction-2" min={0} max={50} placeholder="Cooldown reduction" />
-    </div>
+    {[1, 2].map(number => (
+        <div class="box-border flex flex-col gap-2 p-4">
+            <!-- TODO: Add percentage labels -->
+            <input id={`increased-damage-${number}`} min={0} placeholder="Increased damage" />
+            <input id={`critical-chance-${number}`} min={0} max={100} placeholder="Critical chance" />
+            <input id={`critical-multiplier-${number}`} min={0} placeholder="Critical damage multiplier" />
+            <input id={`cooldown-reduction-${number}`} min={0} max={50} placeholder="Cooldown reduction" />
+        </div>
+    ))}
 
     <span id="output"></span>
 </Layout>
