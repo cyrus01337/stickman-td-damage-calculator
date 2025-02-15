@@ -4,8 +4,9 @@ import Layout from "~/layouts/base.astro";
 ---
 
 <script>
-    const IS_NUMBER = /^(?:^-?[0-9]+(?:\.[0-9]+)?$)|(?:^-?\.[0-9]+$)|(?:^-?[0-9]+\.$)$/;
-    const EXTRACT_INDEX = /[12]$/;
+    // TODO: Trial number validation through manual parsing over... this
+    const IS_NUMBER = /^(?:^(?<sign>-?)[0-9]+(?:\.[0-9]+)?$)|(?:^(?<sign>-?)\.[0-9]+$)|(?:^(?<sign>-?)[0-9]+\.$)$/;
+    const EXTRACT_DATA = /^(?<name>[a-z-]+)-(?<index>[12])$/;
     const NO_INDEX = -1;
     const BASE_DAMAGE = document.getElementById("base-damage") as HTMLInputElement;
 
@@ -31,13 +32,8 @@ import Layout from "~/layouts/base.astro";
         },
     ];
 
-    interface EquipmentMultiplierDefaults {
-        baseDamage: number;
-        attack: number;
-        criticalChance: number;
-        criticalDamage: number;
-        cooldownReduction: number;
-    }
+    type Name = "baseDamage" | "attack" | "criticalChance" | "criticalDamage" | "cooldownReduction";
+    type EquipmentMultiplierDefaults = Record<Name, number>;
 
     const DEFAULTS: EquipmentMultiplierDefaults = {
         baseDamage: 0,
@@ -47,12 +43,53 @@ import Layout from "~/layouts/base.astro";
         cooldownReduction: 0,
     };
 
+    interface IsValidNumberProperties {
+        negative: boolean;
+    }
+
+    const IS_VALID_NUMBER_DEFAULTS: IsValidNumberProperties = {
+        negative: true,
+    };
+
     const OUTPUT = document.getElementById("output") as HTMLSpanElement;
     const i = [0, 0];
     const c = [0, 0];
     const d = [0, 0];
     const s = [0, 0];
     const previousInputs: Record<string, string> = {};
+
+    interface ElementDataProfile {
+        index: number;
+        name: Name;
+    }
+
+    const toTitleCase = (text: string) => {
+        const firstLetter = text.slice(0, 1).toUpperCase();
+        const rest = text.slice(1).toLowerCase();
+
+        return firstLetter + rest;
+    }
+
+    const convertIDToName = (id: string) => {
+        const fragments = id.split("-");
+        const firstWord = fragments[0];
+        const rest = fragments.slice(1).map(toTitleCase);
+
+        return (firstWord + rest) as Name;
+    }
+
+    const extractDataProfileFrom = (id: string): ElementDataProfile | null => {
+        const result = id.match(EXTRACT_DATA);
+
+        if (!result || !result.groups) {
+            return null;
+        }
+
+        return {
+            index: parseInt(result.groups.index),
+            name: convertIDToName(result.groups.name),
+        } satisfies ElementDataProfile;
+    };
 
     const isEmpty = (text: string) => !text;
 
@@ -67,28 +104,60 @@ import Layout from "~/layouts/base.astro";
         const currentContent = inputElement.value;
         const previousInputFound = previousInputs[inputElement.id];
 
-        inputElement.value = (currentContent.length === 1 && previousInputFound?.length === 0) ? previousInputFound : currentContent.slice(0, -1);
+        if (currentContent.length === 1 && previousInputFound.length > 0) {
+            inputElement.value = "";
+        } else {
+            inputElement.value = previousInputFound;
+        }
     };
 
     const processNewInput = (target: HTMLInputElement, fallback: number): [number, number] => {
-        const extractionResult = target.id.match(EXTRACT_INDEX);
+        const result = extractDataProfileFrom(target.id);
         let index = NO_INDEX;
 
-        if (extractionResult !== null) {
-            index = parseInt(extractionResult[0]) - 1;
+        if (result !== null) {
+            index = result.index;
         }
 
         if (isEmpty(target.value)) {
-            return [fallback, index];
-        } else if (!isValidNumber(target.value)) {
-            voidKeypressFor(target);
+            previousInputs[target.id] = target.value;
 
             return [fallback, index];
+        } else if (result?.name === "cooldownReduction") {
+            console.log("Cooldown reduction special case");
+
+            if (target.value !== "-" && !isValidNumber(target.value)) {
+                const previousInputFound = previousInputs[target.id];
+
+                voidKeypressFor(target);
+
+                return [
+                    previousInputFound ? parseFloat(previousInputFound) : fallback,
+                    index
+                ];
+            }
+        } else if (!isValidNumber(target.value)) {
+            const previousInputFound = previousInputs[target.id];
+
+            voidKeypressFor(target);
+
+            return [
+                previousInputFound ? parseFloat(previousInputFound) : fallback,
+                index
+            ];
+        }
+
+        let parsedNumber = parseFloat(target.value);
+
+        if (result?.name !== "cooldownReduction" && parsedNumber < 0) {
+            parsedNumber = Math.abs(parsedNumber);
+
+            voidKeypressFor(target);
         }
 
         previousInputs[target.id] = target.value;
 
-        return [parseFloat(target.value), index];
+        return [parsedNumber, index];
     };
 
     const sum = (numbers: number[]) => numbers.reduce((total, n) => total + n, 0);
