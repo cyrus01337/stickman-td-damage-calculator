@@ -93,8 +93,6 @@ import Layout from "~/layouts/base.astro";
 
     const isEmpty = (text: string) => !text;
 
-    // TODO: Only allow positive integers for multipliers
-    // TODO: Allow for negative multipliers in the case of Reaper
     const isValidNumber = (contents: string) => IS_NUMBER.test(contents);
 
     // For some reason `event.preventDefault()` was not working so I've resorted
