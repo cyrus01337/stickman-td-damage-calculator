@@ -12,10 +12,7 @@
         "",
         "<TYPES>"
     ],
-    "importOrderParserPlugins": [
-        "typescript",
-        "importAssertions"
-    ],
+    "importOrderParserPlugins": ["typescript", "importAssertions"],
     "jsonRecursiveSort": true,
     "overrides": [
         {
