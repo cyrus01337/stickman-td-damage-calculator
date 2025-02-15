@@ -43,14 +43,6 @@ import Layout from "~/layouts/base.astro";
         cooldownReduction: 0,
     };
 
-    interface IsValidNumberProperties {
-        negative: boolean;
-    }
-
-    const IS_VALID_NUMBER_DEFAULTS: IsValidNumberProperties = {
-        negative: true,
-    };
-
     const OUTPUT = document.getElementById("output") as HTMLSpanElement;
     const i = [0, 0];
     const c = [0, 0];
