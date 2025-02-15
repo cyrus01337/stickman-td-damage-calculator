@@ -4,7 +4,7 @@ import Layout from "~/layouts/base.astro";
 ---
 
 <script>
-    const IS_NUMBER = /^[0-9]*.?[0-9]*$/;
+    const IS_NUMBER = /^(?:^-?[0-9]+(?:\.[0-9]+)?$)|(?:^-?\.[0-9]+$)|(?:^-?[0-9]+\.$)$/;
     const EXTRACT_INDEX = /[12]$/;
     const NO_INDEX = -1;
     const BASE_DAMAGE = document.getElementById("base-damage") as HTMLInputElement;
@@ -52,11 +52,11 @@ import Layout from "~/layouts/base.astro";
     const c = [0, 0];
     const d = [0, 0];
     const s = [0, 0];
+    const previousInputs: Record<string, string> = {};
 
     const isEmpty = (text: string) => !text;
 
-    // TODO: Allow decimals for base damage and only positive integers for
-    // multipliers
+    // TODO: Only allow positive integers for multipliers
     // TODO: Allow for negative multipliers in the case of Reaper
     const isValidNumber = (contents: string) => IS_NUMBER.test(contents);
 
@@ -64,7 +64,7 @@ import Layout from "~/layouts/base.astro";
     // to stripping the contents last character and setting that as the input
     // element's new value
     const voidKeypressFor = (inputElement: HTMLInputElement) => {
-        inputElement.value = inputElement.value.slice(0, -1);
+        inputElement.value = previousInputs[inputElement.id] ?? inputElement.value.slice(0, -1);
     };
 
     const processNewInput = (target: HTMLInputElement, fallback: number): [number, number] => {
@@ -82,6 +82,8 @@ import Layout from "~/layouts/base.astro";
 
             return [fallback, index];
         }
+
+        previousInputs[target.id] = target.value;
 
         return [parseFloat(target.value), index];
     };
@@ -190,6 +192,9 @@ import Layout from "~/layouts/base.astro";
     performAndShowCalculation(BASE_DAMAGE);
 </script>
 
+<!-- TODO: Add dark mode -->
+<!-- TODO: Add theme toggling -->
+<!-- TODO: Add source button in top-right corner -->
 <Layout class="box-border flex gap-2 p-4 flex-col lg:py-6">
     <div class="flex flex-row gap-2 lg:flex-col">
         <!-- FIXME: Align titles with placeholders of equipment inputs -->
