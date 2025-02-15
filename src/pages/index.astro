@@ -218,7 +218,7 @@ import Layout from "~/layouts/base.astro";
 
     const trackAttackMultipliers: EventListener = event => {
         const [attackMultiplier, index] = processNewInput(event.target as HTMLInputElement, DEFAULTS.attack);
-        i[index] = attackMultiplier;
+        i[index] = attackMultiplier / 100;
 
         performAndShowCalculation(BASE_DAMAGE);
     };
@@ -235,7 +235,7 @@ import Layout from "~/layouts/base.astro";
             event.target as HTMLInputElement,
             DEFAULTS.criticalDamage,
         );
-        d[index] = criticalDamageMultiplier;
+        d[index] = criticalDamageMultiplier / 100;
 
         performAndShowCalculation(BASE_DAMAGE);
     };
@@ -245,7 +245,7 @@ import Layout from "~/layouts/base.astro";
             event.target as HTMLInputElement,
             DEFAULTS.cooldownReduction,
         );
-        s[index] = cooldownReduction;
+        s[index] = cooldownReduction / 100;
 
         performAndShowCalculation(BASE_DAMAGE);
     };
