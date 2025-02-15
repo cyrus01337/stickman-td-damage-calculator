@@ -67,7 +67,7 @@ import Layout from "~/layouts/base.astro";
         const currentContent = inputElement.value;
         const previousInputFound = previousInputs[inputElement.id];
 
-        inputElement.value = (currentContent.length === 1 && previousInputFound?.length <= 1) ? previousInputFound : currentContent.slice(0, -1);
+        inputElement.value = (currentContent.length === 1 && previousInputFound?.length === 0) ? previousInputFound : currentContent.slice(0, -1);
     };
 
     const processNewInput = (target: HTMLInputElement, fallback: number): [number, number] => {
