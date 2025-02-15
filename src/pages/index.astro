@@ -251,10 +251,9 @@ import Layout from "~/layouts/base.astro";
     performAndShowCalculation(BASE_DAMAGE);
 </script>
 
-<!-- TODO: Add dark mode --><!-- TODO: Add theme toggling --><!-- TODO: Add source button in top-right corner -->
+<!-- TODO: Add theme toggling --><!-- TODO: Add source button in top-right corner -->
 <Layout class="box-border flex flex-col gap-2 p-4 lg:py-6">
     <div class="flex flex-row gap-2 lg:flex-col">
-        <!-- FIXME: Align titles with placeholders of equipment inputs -->
         <span class="box-border hidden font-bold lg:block">Base damage</span>
         <input class="px-2 lg:mb-4 lg:box-border lg:py-2" id="base-damage" min={1} placeholder="Base damage" />
 
