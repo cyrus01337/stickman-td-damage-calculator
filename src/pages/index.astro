@@ -255,14 +255,14 @@ import Layout from "~/layouts/base.astro";
 <Layout class="box-border flex flex-col gap-2 p-4 lg:py-6">
     <div class="flex flex-row gap-2 lg:flex-col">
         <!-- FIXME: Align titles with placeholders of equipment inputs -->
-        <span class="hidden font-bold lg:block">Base damage</span>
+        <span class="box-border hidden font-bold lg:block">Base damage</span>
         <input class="px-2 lg:mb-4 lg:box-border lg:py-2" id="base-damage" min={1} placeholder="Base damage" />
 
         <div class="flex flex-row gap-2 lg:mb-4 lg:w-full lg:flex-col lg:gap-6">
             {
                 [1, 2].map(number => (
                     <div class="box-border flex flex-col gap-2 lg:gap-2.5">
-                        <span class="font-bold">Equipment #{number}</span>
+                        <span class="box-border pl-2 font-bold">Equipment #{number}</span>
 
                         <div class="join items-center">
                             <input
