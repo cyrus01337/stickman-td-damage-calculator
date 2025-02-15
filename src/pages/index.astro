@@ -68,7 +68,7 @@ import Layout from "~/layouts/base.astro";
         const rest = text.slice(1).toLowerCase();
 
         return firstLetter + rest;
-    }
+    };
 
     const convertIDToName = (id: string) => {
         const fragments = id.split("-");
@@ -76,7 +76,7 @@ import Layout from "~/layouts/base.astro";
         const rest = fragments.slice(1).map(toTitleCase);
 
         return (firstWord + rest) as Name;
-    }
+    };
 
     const extractDataProfileFrom = (id: string): ElementDataProfile | null => {
         const result = id.match(EXTRACT_DATA);
@@ -129,20 +129,14 @@ import Layout from "~/layouts/base.astro";
 
                 voidKeypressFor(target);
 
-                return [
-                    previousInputFound ? parseFloat(previousInputFound) : fallback,
-                    index
-                ];
+                return [previousInputFound ? parseFloat(previousInputFound) : fallback, index];
             }
         } else if (!isValidNumber(target.value)) {
             const previousInputFound = previousInputs[target.id];
 
             voidKeypressFor(target);
 
-            return [
-                previousInputFound ? parseFloat(previousInputFound) : fallback,
-                index
-            ];
+            return [previousInputFound ? parseFloat(previousInputFound) : fallback, index];
         }
 
         let parsedNumber = parseFloat(target.value);
@@ -182,7 +176,10 @@ import Layout from "~/layouts/base.astro";
         const totalCooldownReduction = sum(s);
         let cooldownReduction = s;
 
-        if (totalCooldownReduction < 0 || (totalCooldownReduction === 0 && cooldownReduction[0] !== 0 && cooldownReduction[1] !== 0)) {
+        if (
+            totalCooldownReduction < 0 ||
+            (totalCooldownReduction === 0 && cooldownReduction[0] !== 0 && cooldownReduction[1] !== 0)
+        ) {
             cooldownReduction = [0, 0];
         } else if (totalCooldownReduction > 1) {
             cooldownReduction = [1, 0];
@@ -262,29 +259,65 @@ import Layout from "~/layouts/base.astro";
     performAndShowCalculation(BASE_DAMAGE);
 </script>
 
-<!-- TODO: Add dark mode -->
-<!-- TODO: Add theme toggling -->
-<!-- TODO: Add source button in top-right corner -->
-<Layout class="box-border flex gap-2 p-4 flex-col lg:py-6">
+<!-- TODO: Add dark mode --><!-- TODO: Add theme toggling --><!-- TODO: Add source button in top-right corner -->
+<Layout class="box-border flex flex-col gap-2 p-4 lg:py-6">
     <div class="flex flex-row gap-2 lg:flex-col">
         <!-- FIXME: Align titles with placeholders of equipment inputs -->
         <span class="hidden font-bold lg:block">Base damage</span>
-        <input class="px-2 lg:box-border lg:py-2 lg:mb-4" id="base-damage" min={1} placeholder="Base damage" />
+        <input class="px-2 lg:mb-4 lg:box-border lg:py-2" id="base-damage" min={1} placeholder="Base damage" />
 
-        <div class="flex flex-row lg:flex-col lg:w-full gap-2 lg:mb-4 lg:gap-6">
-            {[1, 2].map(number => (
-                <div class="box-border flex flex-col gap-2 lg:gap-2.5">
-                    <span class="font-bold">Equipment #{number}</span>
+        <div class="flex flex-row gap-2 lg:mb-4 lg:w-full lg:flex-col lg:gap-6">
+            {
+                [1, 2].map(number => (
+                    <div class="box-border flex flex-col gap-2 lg:gap-2.5">
+                        <span class="font-bold">Equipment #{number}</span>
 
-                    <!-- TODO: Add percentage labels -->
-                    <input class="px-2 py-1 lg:box-brder lg:py-2" id={`increased-damage-${number}`} min={0} placeholder="Increased damage" />
-                    <input class="px-2 py-1 lg:box-brder lg:py-2" id={`critical-chance-${number}`} min={0} max={100} placeholder="Critical chance" />
-                    <input class="px-2 py-1 lg:box-brder lg:py-2" id={`critical-multiplier-${number}`} min={0} placeholder="Critical damage multiplier" />
-                    <input class="px-2 py-1 lg:box-border lg:py-2" id={`cooldown-reduction-${number}`} min={0} max={50} placeholder="Cooldown reduction" />
-                </div>
-            ))}
+                        <div class="join items-center">
+                            <input
+                                class="px-2 py-1 lg:box-border lg:py-2"
+                                id={`increased-damage-${number}`}
+                                min={0}
+                                placeholder="Increased damage"
+                            />
+                            <span>%</span>
+                        </div>
+
+                        <div class="join items-center">
+                            <input
+                                class="px-2 py-1 lg:box-border lg:py-2"
+                                id={`critical-chance-${number}`}
+                                min={0}
+                                max={100}
+                                placeholder="Critical chance"
+                            />
+                            <span>%</span>
+                        </div>
+
+                        <div class="join items-center">
+                            <input
+                                class="px-2 py-1 lg:box-border lg:py-2"
+                                id={`critical-multiplier-${number}`}
+                                min={0}
+                                placeholder="Critical damage multiplier"
+                            />
+                            <span>%</span>
+                        </div>
+
+                        <div class="join items-center">
+                            <input
+                                class="px-2 py-1 lg:box-border lg:py-2"
+                                id={`cooldown-reduction-${number}`}
+                                min={0}
+                                max={50}
+                                placeholder="Cooldown reduction"
+                            />
+                            <span>%</span>
+                        </div>
+                    </div>
+                ))
+            }
         </div>
     </div>
 
-    <span  id="output"></span>
+    <span id="output"></span>
 </Layout>
