@@ -1,7 +1,5 @@
 ---
-// TODO: Make a simple version using auto-completable names and pre-defined
-// values
-// TODO: Create a mini hub page to display both types of calculators
+// TODO: Allow equipment to be selected automatically via dropdown/combobox
 import Layout from "~/layouts/base.astro";
 ---
 
@@ -109,14 +107,20 @@ import Layout from "~/layouts/base.astro";
         const attackMultiplier = sum(i);
         const criticalChance = Math.min(sum(c), 1);
         const criticalDamage = sum(d);
-        const cooldownReduction = s;
+        const totalCooldownReduction = sum(s);
+        let cooldownReduction = s;
+
+        if (totalCooldownReduction < 0 || (totalCooldownReduction === 0 && cooldownReduction[0] !== 0 && cooldownReduction[1] !== 0)) {
+            cooldownReduction = [0, 0];
+        } else if (totalCooldownReduction > 1) {
+            cooldownReduction = [1, 0];
+        }
+
         const totalDamageMultiplier =
             (1 + attackMultiplier) *
             (criticalChance * (criticalDamage + 1.5) + (1 - criticalChance)) *
             ((1 / (1 - cooldownReduction[0])) * (1 / (1 - cooldownReduction[1])));
-        // TODO: Make prettier
         const prettyTotalDamage = prettifyNumber(baseDamage * totalDamageMultiplier, 1);
-        // FIXME: Set to 0 if no values are set
         const prettyTotalDamageMultiplier = prettifyNumber(totalDamageMultiplier * 100, 2);
         const additiveTotalDamageMultiplier = prettifyNumber((totalDamageMultiplier - 1) * 100, 2);
 
@@ -188,6 +192,7 @@ import Layout from "~/layouts/base.astro";
 
 <Layout class="box-border flex gap-2 p-4 flex-col lg:py-6">
     <div class="flex flex-row gap-2 lg:flex-col">
+        <!-- FIXME: Align titles with placeholders of equipment inputs -->
         <span class="hidden font-bold lg:block">Base damage</span>
         <input class="px-2 lg:box-border lg:py-2 lg:mb-4" id="base-damage" min={1} placeholder="Base damage" />
 
