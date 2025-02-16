@@ -232,7 +232,7 @@ import Layout from "~/layouts/base.astro";
             event.target as HTMLInputElement,
             DEFAULTS.cooldownReduction,
         );
-        s[index] = cooldownReduction / 100;
+        s[index - 1] = cooldownReduction / 100;
 
         performAndShowCalculation(BASE_DAMAGE);
     };
