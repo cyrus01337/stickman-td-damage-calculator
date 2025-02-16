@@ -1,6 +1,8 @@
 ---
 import "@fontsource-variable/inter-tight";
 
+import ThemeController from "~/components/theme-controller.tsx";
+
 interface Props {
     class?: string;
 }
@@ -9,8 +11,9 @@ const { class: className = null } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
+<html data-theme="light" lang="en">
     <head>
+        <!-- TODO: Add embed -->
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content={Astro.generator} />
@@ -18,11 +21,35 @@ const { class: className = null } = Astro.props;
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
         <title>Stickman TD Damage Calculator</title>
+
+        <script is:inline>
+            const theme = localStorage.getItem("theme");
+
+            if (!theme) {
+                document.documentElement.setAttribute("data-theme", "dark");
+            } else {
+                document.documentElement.setAttribute("data-theme", theme);
+            }
+        </script>
+
+        <script>
+            import { themeChange } from "theme-change";
+
+            themeChange();
+        </script>
     </head>
 
     <body>
         <div class={className}>
-            <slot />
+            <nav class="box-border flex w-full flex-row justify-between lg:mb-3">
+                <span class="text-2xl font-bold">Stickman TD <br class="hidden lg:block" />Damage Calculator</span>
+
+                <ThemeController client:only="react" />
+            </nav>
+
+            <main class="flex flex-row gap-2 lg:flex-col">
+                <slot />
+            </main>
         </div>
     </body>
 </html>

@@ -5,7 +5,7 @@ import Layout from "~/layouts/base.astro";
 
 <script>
     // TODO: Trial number validation through manual parsing over... this
-    const IS_NUMBER = /^(?:^(?<sign>-?)[0-9]+(?:\.[0-9]+)?$)|(?:^(?<sign>-?)\.[0-9]+$)|(?:^(?<sign>-?)[0-9]+\.$)$/;
+    const IS_NUMBER = /^(?:^[0-9]+(?:\.[0-9]+)?$)|(?:^\.[0-9]+$)|(?:^[0-9]+\.$)$/;
     const EXTRACT_DATA = /^(?<name>[a-z-]+)-(?<index>[12])$/;
     const NO_INDEX = -1;
     const BASE_DAMAGE = document.getElementById("base-damage") as HTMLInputElement;
@@ -114,8 +114,6 @@ import Layout from "~/layouts/base.astro";
 
             return [fallback, index];
         } else if (result?.name === "cooldownReduction") {
-            console.log("Cooldown reduction special case");
-
             if (target.value !== "-" && !isValidNumber(target.value)) {
                 const previousInputFound = previousInputs[target.id];
 
@@ -253,61 +251,59 @@ import Layout from "~/layouts/base.astro";
 
 <!-- TODO: Add theme toggling --><!-- TODO: Add source button in top-right corner -->
 <Layout class="box-border flex flex-col gap-2 p-4 lg:py-6">
-    <div class="flex flex-row gap-2 lg:flex-col">
-        <span class="box-border hidden font-bold lg:block">Base damage</span>
-        <input class="px-2 lg:mb-4 lg:box-border lg:py-2" id="base-damage" min={1} placeholder="Base damage" />
+    <span class="box-border hidden font-bold lg:block">Base damage</span>
+    <input class="px-2 lg:mb-4 lg:box-border lg:py-2" id="base-damage" min={1} placeholder="Base damage" />
 
-        <div class="flex flex-row gap-2 lg:mb-4 lg:w-full lg:flex-col lg:gap-6">
-            {
-                [1, 2].map(number => (
-                    <div class="box-border flex flex-col gap-2 lg:gap-2.5">
-                        <span class="box-border pl-2 font-bold">Equipment #{number}</span>
+    <div class="flex flex-row gap-2 lg:mb-4 lg:w-full lg:flex-col lg:gap-6">
+        {
+            [1, 2].map(number => (
+                <div class="box-border flex flex-col gap-2 lg:gap-2.5">
+                    <span class="box-border pl-2 font-bold">Equipment #{number}</span>
 
-                        <div class="join items-center">
-                            <input
-                                class="px-2 py-1 lg:box-border lg:py-2"
-                                id={`increased-damage-${number}`}
-                                min={0}
-                                placeholder="Increased damage"
-                            />
-                            <span>%</span>
-                        </div>
-
-                        <div class="join items-center">
-                            <input
-                                class="px-2 py-1 lg:box-border lg:py-2"
-                                id={`critical-chance-${number}`}
-                                min={0}
-                                max={100}
-                                placeholder="Critical chance"
-                            />
-                            <span>%</span>
-                        </div>
-
-                        <div class="join items-center">
-                            <input
-                                class="px-2 py-1 lg:box-border lg:py-2"
-                                id={`critical-multiplier-${number}`}
-                                min={0}
-                                placeholder="Critical damage multiplier"
-                            />
-                            <span>%</span>
-                        </div>
-
-                        <div class="join items-center">
-                            <input
-                                class="px-2 py-1 lg:box-border lg:py-2"
-                                id={`cooldown-reduction-${number}`}
-                                min={0}
-                                max={50}
-                                placeholder="Cooldown reduction"
-                            />
-                            <span>%</span>
-                        </div>
+                    <div class="join items-center">
+                        <input
+                            class="px-2 py-1 lg:box-border lg:py-2"
+                            id={`increased-damage-${number}`}
+                            min={0}
+                            placeholder="Increased damage"
+                        />
+                        <span>%</span>
                     </div>
-                ))
-            }
-        </div>
+
+                    <div class="join items-center">
+                        <input
+                            class="px-2 py-1 lg:box-border lg:py-2"
+                            id={`critical-chance-${number}`}
+                            min={0}
+                            max={100}
+                            placeholder="Critical chance"
+                        />
+                        <span>%</span>
+                    </div>
+
+                    <div class="join items-center">
+                        <input
+                            class="px-2 py-1 lg:box-border lg:py-2"
+                            id={`critical-multiplier-${number}`}
+                            min={0}
+                            placeholder="Critical damage multiplier"
+                        />
+                        <span>%</span>
+                    </div>
+
+                    <div class="join items-center">
+                        <input
+                            class="px-2 py-1 lg:box-border lg:py-2"
+                            id={`cooldown-reduction-${number}`}
+                            min={0}
+                            max={50}
+                            placeholder="Cooldown reduction"
+                        />
+                        <span>%</span>
+                    </div>
+                </div>
+            ))
+        }
     </div>
 
     <span id="output"></span>

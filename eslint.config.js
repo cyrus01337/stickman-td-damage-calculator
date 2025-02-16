@@ -10,7 +10,7 @@ export default typescript.config(
     ...typescript.configs.stylistic,
     ...astro.configs.recommended,
     {
-        ignores: ["external/", "node_modules/", ".astro/", ".husky/"],
+        ignores: ["dist/", "external/", "node_modules/", ".astro/", ".husky/"],
     },
     {
         rules: {
