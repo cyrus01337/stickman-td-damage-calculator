@@ -1,6 +1,7 @@
 ---
 import "@fontsource-variable/inter-tight";
 
+import GitHub from "~/components/github.astro";
 import ThemeController from "~/components/theme-controller.tsx";
 
 interface Props {
@@ -45,6 +46,7 @@ const { class: className = null } = Astro.props;
                 <span class="text-2xl font-bold">Stickman TD <br class="hidden lg:block" />Damage Calculator</span>
 
                 <ThemeController client:only="react" />
+                <GitHub />
             </nav>
 
             <main class="flex flex-row gap-2 lg:flex-col">
