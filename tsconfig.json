@@ -1,12 +1,14 @@
 {
     "compilerOptions": {
+        "allowJs": true,
         "baseUrl": ".",
         "jsx": "react-jsx",
         "jsxImportSource": "react",
         "noEmit": true,
         "paths": {
             "~/*": ["src/*"]
-        }
+        },
+        "strictNullChecks": true
     },
     "extends": "astro/tsconfigs/strict"
 }
