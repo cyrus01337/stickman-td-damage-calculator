@@ -1,6 +1,11 @@
 ---
-// TODO: Allow equipment to be selected automatically via dropdown/combobox
+// TODO: Make everything look pretty with Daisy UI
+
 import Layout from "~/layouts/base.astro";
+import equipment from "~/equipment";
+
+// TODO: Find a way to do this within the content loader
+const namedEquipment = await equipment.withNames();
 ---
 
 <script>
@@ -11,36 +16,36 @@ import Layout from "~/layouts/base.astro";
     const BASE_DAMAGE = document.getElementById("base-damage") as HTMLInputElement;
 
     interface EquipmentMultiplierElements {
-        increasedDamage: HTMLInputElement;
+        cooldownReduction: HTMLInputElement;
         criticalChance: HTMLInputElement;
         criticalDamage: HTMLInputElement;
-        cooldownReduction: HTMLInputElement;
+        damage: HTMLInputElement;
     }
 
     const EQUIPMENT: EquipmentMultiplierElements[] = [
         {
-            increasedDamage: document.getElementById("increased-damage-1") as HTMLInputElement,
+            cooldownReduction: document.getElementById("cooldown-reduction-1") as HTMLInputElement,
             criticalChance: document.getElementById("critical-chance-1") as HTMLInputElement,
             criticalDamage: document.getElementById("critical-multiplier-1") as HTMLInputElement,
-            cooldownReduction: document.getElementById("cooldown-reduction-1") as HTMLInputElement,
+            damage: document.getElementById("damage-1") as HTMLInputElement,
         },
         {
-            increasedDamage: document.getElementById("increased-damage-2") as HTMLInputElement,
+            cooldownReduction: document.getElementById("cooldown-reduction-2") as HTMLInputElement,
             criticalChance: document.getElementById("critical-chance-2") as HTMLInputElement,
             criticalDamage: document.getElementById("critical-multiplier-2") as HTMLInputElement,
-            cooldownReduction: document.getElementById("cooldown-reduction-2") as HTMLInputElement,
+            damage: document.getElementById("damage-2") as HTMLInputElement,
         },
     ];
 
-    type Name = "baseDamage" | "attack" | "criticalChance" | "criticalDamage" | "cooldownReduction";
+    type Name = "baseDamage" | "cooldownReduction" | "criticalChance" | "criticalDamage" | "damage";
     type EquipmentMultiplierDefaults = Record<Name, number>;
 
     const DEFAULTS: EquipmentMultiplierDefaults = {
         baseDamage: 0,
-        attack: 0,
+        cooldownReduction: 0,
         criticalChance: 0,
         criticalDamage: 0,
-        cooldownReduction: 0,
+        damage: 0,
     };
 
     const OUTPUT = document.getElementById("output") as HTMLSpanElement;
@@ -87,9 +92,6 @@ import Layout from "~/layouts/base.astro";
 
     const isValidNumber = (contents: string) => IS_NUMBER.test(contents);
 
-    // For some reason `event.preventDefault()` was not working so I've resorted
-    // to stripping the contents last character and setting that as the input
-    // element's new value
     const voidKeypressFor = (inputElement: HTMLInputElement) => {
         const currentContent = inputElement.value;
         const previousInputFound = previousInputs[inputElement.id];
@@ -203,9 +205,12 @@ import Layout from "~/layouts/base.astro";
         performAndShowCalculation(event.target as HTMLInputElement);
     };
 
-    const trackAttackMultipliers: EventListener = event => {
-        const [attackMultiplier, index] = processNewInput(event.target as HTMLInputElement, DEFAULTS.attack);
-        i[index] = attackMultiplier / 100;
+    const trackCooldownReductions: EventListener = event => {
+        const [cooldownReduction, index] = processNewInput(
+            event.target as HTMLInputElement,
+            DEFAULTS.cooldownReduction,
+        );
+        s[index - 1] = cooldownReduction / 100;
 
         performAndShowCalculation(BASE_DAMAGE);
     };
@@ -227,49 +232,103 @@ import Layout from "~/layouts/base.astro";
         performAndShowCalculation(BASE_DAMAGE);
     };
 
-    const trackCooldownReductions: EventListener = event => {
-        const [cooldownReduction, index] = processNewInput(
-            event.target as HTMLInputElement,
-            DEFAULTS.cooldownReduction,
-        );
-        s[index - 1] = cooldownReduction / 100;
+    const trackDamageMultipliers: EventListener = event => {
+        const [damageMultiplier, index] = processNewInput(event.target as HTMLInputElement, DEFAULTS.damage);
+        i[index] = damageMultiplier / 100;
 
         performAndShowCalculation(BASE_DAMAGE);
     };
 
+    const trackEquipmentSelection: EventListener = event => {
+        const target = event.target as HTMLSelectElement;
+        const data = extractDataProfileFrom(target.id) as ElementDataProfile;
+        const option = document.getElementById(target.value) as HTMLOptionElement;
+
+        const cooldownReductionInput = EQUIPMENT[data.index - 1].cooldownReduction;
+        cooldownReductionInput.value = option.dataset.cooldownReduction ?? "";
+        const [cooldownReductionMultiplier, cooldownReductionIndex] = processNewInput(cooldownReductionInput, DEFAULTS.cooldownReduction);
+        d[cooldownReductionIndex] = cooldownReductionMultiplier / 100;
+
+        const criticalChanceInput = EQUIPMENT[data.index - 1].criticalChance;
+        criticalChanceInput.value = option.dataset.criticalChance ?? "";
+        const [criticalChance, criticalChangeIndex] = processNewInput(criticalChanceInput, DEFAULTS.criticalChance);
+        c[criticalChangeIndex] = criticalChance / 100;
+
+        const criticalDamageInput = EQUIPMENT[data.index - 1].criticalDamage;
+        criticalDamageInput.value = option.dataset.criticalDamage ?? "";
+        const [criticalDamageMultiplier, criticalDamageIndex] = processNewInput(criticalDamageInput, DEFAULTS.criticalDamage);
+        d[criticalDamageIndex] = criticalDamageMultiplier / 100;
+
+        const damageInput = EQUIPMENT[data.index - 1].damage;
+        damageInput.value = option.dataset.damage ?? "";
+        const [damageMultiplier, damageIndex] = processNewInput(damageInput, DEFAULTS.damage);
+        i[damageIndex] = damageMultiplier / 100;
+
+        performAndShowCalculation(BASE_DAMAGE);
+    }
+
     BASE_DAMAGE.addEventListener("input", displayCalculatedDamage);
 
     for (const multipliers of EQUIPMENT) {
-        multipliers.increasedDamage.addEventListener("input", trackAttackMultipliers);
+        multipliers.cooldownReduction.addEventListener("input", trackCooldownReductions);
         multipliers.criticalChance.addEventListener("input", trackCriticalChances);
         multipliers.criticalDamage.addEventListener("input", trackCriticalDamageMultipliers);
-        multipliers.cooldownReduction.addEventListener("input", trackCooldownReductions);
+        multipliers.damage.addEventListener("input", trackDamageMultipliers);
+    }
+
+    for (let index = 1; index < 3; index++) {
+        const selectorID = `equipment-selector-${index}`;
+        const selector = document.getElementById(selectorID) as HTMLSelectElement;
+
+        selector?.addEventListener("change", trackEquipmentSelection);
     }
 
     performAndShowCalculation(BASE_DAMAGE);
 </script>
 
+<!-- <SharedState namedEquipment={namedEquipment} /> -->
+
 <Layout class="box-border flex flex-col gap-2 p-4 lg:py-6">
     <span class="box-border hidden font-bold lg:block">Base damage</span>
+    <!-- TODO: Add cooldown field to calculate a unit's DPS automatically
+    rather than expecting people to calculate it for them -->
     <input class="px-2 lg:mb-4 lg:box-border lg:py-2" id="base-damage" min={1} placeholder="Base damage" />
 
     <div class="flex flex-row gap-2 lg:mb-4 lg:w-full lg:flex-col lg:gap-6">
         {
             [1, 2].map(number => (
                 <div class="box-border flex flex-col gap-2 lg:gap-2.5">
-                    <span class="box-border pl-2 font-bold">Equipment #{number}</span>
+                    <span class="box-border px-2 font-bold">Equipment #{number}</span>
 
-                    <div class="join items-center">
+                    <select class="box-border p-2" id={`equipment-selector-${number}`}>
+                        <option disabled selected>Select equipment...</option>
+
+                        {namedEquipment.map(entry => (
+                            <option
+                                data-cooldown-reduction={entry.data.cooldownReduction}
+                                data-critical-chance={entry.data.criticalChance}
+                                data-critical-damage={entry.data.criticalDamage}
+                                data-damage={entry.data.damage}
+                                id={entry.id}
+                                value={entry.id}
+                            >
+                                {entry.name}
+                            </option>
+                        ))}
+                    </select>
+
+                    <!-- TODO: Componentise -->
+                    <div class="join items-center gap-2 box-border pr-1">
                         <input
                             class="px-2 py-1 lg:box-border lg:py-2"
-                            id={`increased-damage-${number}`}
+                            id={`damage-${number}`}
                             min={0}
                             placeholder="Increased damage"
                         />
                         <span>%</span>
                     </div>
 
-                    <div class="join items-center">
+                    <div class="join items-center gap-2 box-border pr-1">
                         <input
                             class="px-2 py-1 lg:box-border lg:py-2"
                             id={`critical-chance-${number}`}
@@ -280,7 +339,7 @@ import Layout from "~/layouts/base.astro";
                         <span>%</span>
                     </div>
 
-                    <div class="join items-center">
+                    <div class="join items-center gap-2 box-border pr-1">
                         <input
                             class="px-2 py-1 lg:box-border lg:py-2"
                             id={`critical-multiplier-${number}`}
@@ -290,7 +349,7 @@ import Layout from "~/layouts/base.astro";
                         <span>%</span>
                     </div>
 
-                    <div class="join items-center">
+                    <div class="join items-center gap-2 box-border pr-1">
                         <input
                             class="px-2 py-1 lg:box-border lg:py-2"
                             id={`cooldown-reduction-${number}`}
