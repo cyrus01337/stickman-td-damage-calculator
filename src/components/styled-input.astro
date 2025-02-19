@@ -1,0 +1,20 @@
+---
+interface Props {
+    id: string;
+    placeholder: string;
+    max?: number;
+}
+
+const properties = Astro.props;
+---
+
+<div class="join box-border items-center gap-2 pr-1">
+    <input
+        class="px-2 py-1 lg:box-border lg:py-2"
+        id={properties.id}
+        min={0}
+        max={properties.max}
+        placeholder={properties.placeholder}
+    />
+    <span>%</span>
+</div>

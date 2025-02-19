@@ -1,8 +1,9 @@
 ---
 // TODO: Make everything look pretty with Daisy UI
 
-import Layout from "~/layouts/base.astro";
+import StyledInput from "~/components/styled-input.astro";
 import equipment from "~/equipment";
+import Layout from "~/layouts/base.astro";
 
 // TODO: Find a way to do this within the content loader
 const namedEquipment = await equipment.withNames();
@@ -246,7 +247,10 @@ const namedEquipment = await equipment.withNames();
 
         const cooldownReductionInput = EQUIPMENT[data.index - 1].cooldownReduction;
         cooldownReductionInput.value = option.dataset.cooldownReduction ?? "";
-        const [cooldownReductionMultiplier, cooldownReductionIndex] = processNewInput(cooldownReductionInput, DEFAULTS.cooldownReduction);
+        const [cooldownReductionMultiplier, cooldownReductionIndex] = processNewInput(
+            cooldownReductionInput,
+            DEFAULTS.cooldownReduction,
+        );
         d[cooldownReductionIndex] = cooldownReductionMultiplier / 100;
 
         const criticalChanceInput = EQUIPMENT[data.index - 1].criticalChance;
@@ -256,7 +260,10 @@ const namedEquipment = await equipment.withNames();
 
         const criticalDamageInput = EQUIPMENT[data.index - 1].criticalDamage;
         criticalDamageInput.value = option.dataset.criticalDamage ?? "";
-        const [criticalDamageMultiplier, criticalDamageIndex] = processNewInput(criticalDamageInput, DEFAULTS.criticalDamage);
+        const [criticalDamageMultiplier, criticalDamageIndex] = processNewInput(
+            criticalDamageInput,
+            DEFAULTS.criticalDamage,
+        );
         d[criticalDamageIndex] = criticalDamageMultiplier / 100;
 
         const damageInput = EQUIPMENT[data.index - 1].damage;
@@ -265,7 +272,7 @@ const namedEquipment = await equipment.withNames();
         i[damageIndex] = damageMultiplier / 100;
 
         performAndShowCalculation(BASE_DAMAGE);
-    }
+    };
 
     BASE_DAMAGE.addEventListener("input", displayCalculatedDamage);
 
@@ -287,7 +294,6 @@ const namedEquipment = await equipment.withNames();
 </script>
 
 <!-- <SharedState namedEquipment={namedEquipment} /> -->
-
 <Layout class="box-border flex flex-col gap-2 p-4 lg:py-6">
     <span class="box-border hidden font-bold lg:block">Base damage</span>
     <!-- TODO: Add cooldown field to calculate a unit's DPS automatically
@@ -301,7 +307,9 @@ const namedEquipment = await equipment.withNames();
                     <span class="box-border px-2 font-bold">Equipment #{number}</span>
 
                     <select class="box-border p-2" id={`equipment-selector-${number}`}>
-                        <option disabled selected>Select equipment...</option>
+                        <option disabled selected>
+                            Select equipment...
+                        </option>
 
                         {namedEquipment.map(entry => (
                             <option
@@ -317,48 +325,10 @@ const namedEquipment = await equipment.withNames();
                         ))}
                     </select>
 
-                    <!-- TODO: Componentise -->
-                    <div class="join items-center gap-2 box-border pr-1">
-                        <input
-                            class="px-2 py-1 lg:box-border lg:py-2"
-                            id={`damage-${number}`}
-                            min={0}
-                            placeholder="Increased damage"
-                        />
-                        <span>%</span>
-                    </div>
-
-                    <div class="join items-center gap-2 box-border pr-1">
-                        <input
-                            class="px-2 py-1 lg:box-border lg:py-2"
-                            id={`critical-chance-${number}`}
-                            min={0}
-                            max={100}
-                            placeholder="Critical chance"
-                        />
-                        <span>%</span>
-                    </div>
-
-                    <div class="join items-center gap-2 box-border pr-1">
-                        <input
-                            class="px-2 py-1 lg:box-border lg:py-2"
-                            id={`critical-multiplier-${number}`}
-                            min={0}
-                            placeholder="Critical damage multiplier"
-                        />
-                        <span>%</span>
-                    </div>
-
-                    <div class="join items-center gap-2 box-border pr-1">
-                        <input
-                            class="px-2 py-1 lg:box-border lg:py-2"
-                            id={`cooldown-reduction-${number}`}
-                            min={0}
-                            max={50}
-                            placeholder="Cooldown reduction"
-                        />
-                        <span>%</span>
-                    </div>
+                    <StyledInput id={`damage-${number}`} placeholder="Increased damage" />
+                    <StyledInput id={`critical-chance-${number}`} max={100} placeholder="Critical chance" />
+                    <StyledInput id={`critical-multiplier-${number}`} placeholder="Critical damage multiplier" />
+                    <StyledInput id={`cooldown-reduction-${number}`} max={50} placeholder="Cooldown reduction" />
                 </div>
             ))
         }
