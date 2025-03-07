@@ -11,7 +11,7 @@ const namedEquipment = await equipment.withNames();
 
 <script>
     // TODO: Trial number validation through manual parsing over... this
-    const IS_NUMBER = /^(?:^[0-9]+(?:\.[0-9]+)?$)|(?:^\.[0-9]+$)|(?:^[0-9]+\.$)$/;
+    const IS_NUMBER = /^(?:^-?[0-9]+(?:\.[0-9]+)?$)|(?:^-?\.[0-9]+$)|(?:^-?[0-9]+\.$)$/;
     const EXTRACT_DATA = /^(?<name>[a-z-]+)-(?<index>[12])$/;
     const NO_INDEX = -1;
     const BASE_DAMAGE = document.getElementById("base-damage") as HTMLInputElement;
@@ -169,12 +169,7 @@ const namedEquipment = await equipment.withNames();
         const totalCooldownReduction = sum(s);
         let cooldownReduction = s;
 
-        if (
-            totalCooldownReduction < 0 ||
-            (totalCooldownReduction === 0 && cooldownReduction[0] !== 0 && cooldownReduction[1] !== 0)
-        ) {
-            cooldownReduction = [0, 0];
-        } else if (totalCooldownReduction > 1) {
+        if (totalCooldownReduction > 1) {
             cooldownReduction = [1, 0];
         }
 
@@ -251,12 +246,12 @@ const namedEquipment = await equipment.withNames();
             cooldownReductionInput,
             DEFAULTS.cooldownReduction,
         );
-        d[cooldownReductionIndex] = cooldownReductionMultiplier / 100;
+        s[cooldownReductionIndex - 1] = cooldownReductionMultiplier / 100;
 
         const criticalChanceInput = EQUIPMENT[data.index - 1].criticalChance;
         criticalChanceInput.value = option.dataset.criticalChance ?? "";
         const [criticalChance, criticalChangeIndex] = processNewInput(criticalChanceInput, DEFAULTS.criticalChance);
-        c[criticalChangeIndex] = criticalChance / 100;
+        c[criticalChangeIndex - 1] = criticalChance / 100;
 
         const criticalDamageInput = EQUIPMENT[data.index - 1].criticalDamage;
         criticalDamageInput.value = option.dataset.criticalDamage ?? "";
@@ -264,12 +259,12 @@ const namedEquipment = await equipment.withNames();
             criticalDamageInput,
             DEFAULTS.criticalDamage,
         );
-        d[criticalDamageIndex] = criticalDamageMultiplier / 100;
+        d[criticalDamageIndex - 1] = criticalDamageMultiplier / 100;
 
         const damageInput = EQUIPMENT[data.index - 1].damage;
         damageInput.value = option.dataset.damage ?? "";
         const [damageMultiplier, damageIndex] = processNewInput(damageInput, DEFAULTS.damage);
-        i[damageIndex] = damageMultiplier / 100;
+        i[damageIndex - 1] = damageMultiplier / 100;
 
         performAndShowCalculation(BASE_DAMAGE);
     };
