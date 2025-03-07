@@ -5,9 +5,5 @@ This tool calculates the total damage and total damage multiplier by following a
 ### Formula
 
 $$
-a = Attack damage \\
-c^c = Critical Chance \\
-c^d = Critical Damage \\
-c^r = Cooldown Reduction \\
 (1 + a) * (c^c * (c^d + 1.5) + (1 - c^c)) * ((1 / (1 - c^r_1)) * (1 / (1 - c^r_2)))
 $$
