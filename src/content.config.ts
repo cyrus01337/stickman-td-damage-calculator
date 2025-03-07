@@ -7,7 +7,7 @@ const equipmentSchema = zod
         criticalChance: zod.number().positive().optional(),
         criticalDamage: zod.number().positive().optional(),
         damage: zod.number().positive().optional(),
-        range: zod.number().positive().optional(),
+        range: zod.number().optional(),
     })
     .refine(data => Object.values(data).some(value => value !== undefined), {
         message: "At least one field must be provided",
