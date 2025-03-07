@@ -1,12 +1,25 @@
 ---
 // TODO: Make everything look pretty with Daisy UI
+import { getCollection } from "astro:content";
 
 import StyledInput from "~/components/styled-input.astro";
-import equipment from "~/equipment";
 import Layout from "~/layouts/base.astro";
 
+const toTitleCase = (text: string) => {
+    const firstLetter = text.slice(0, 1).toUpperCase();
+    const rest = text.slice(1).toLowerCase();
+
+    return firstLetter + rest;
+};
+
 // TODO: Find a way to do this within the content loader
-const namedEquipment = await equipment.withNames();
+const namedEquipment = (await getCollection("equipment")).map(equipment => ({
+    ...equipment,
+    name: equipment.id
+        .split("-")
+        .map(word => (word === "of" ? word : toTitleCase(word)))
+        .join(" "),
+}));
 ---
 
 <script>
@@ -296,48 +309,49 @@ const namedEquipment = await equipment.withNames();
 <!-- <SharedState namedEquipment={namedEquipment} /> -->
 <Layout class="box-border flex flex-col gap-2 p-4 lg:py-6">
     <div class="flex flex-col gap-2">
-        <div class="grow box-border flex flex-col gap-2">
+        <div class="box-border flex grow flex-col gap-2">
             <span class="box-border hidden font-bold lg:block">Base damage</span>
-            <input class="px-2 lg:box-border lg:py-2 size-full" id="base-damage" min={0} placeholder="Base damage" />
+            <input class="size-full px-2 lg:box-border lg:py-2" id="base-damage" min={0} placeholder="Base damage" />
         </div>
 
-        <div class="grow box-border flex flex-col gap-2">
+        <div class="box-border flex grow flex-col gap-2">
             <span class="box-border hidden font-bold lg:block">Cooldown</span>
-            <input class="px-2 lg:box-border lg:py-2 size-full" id="cooldown" min={0} placeholder="Cooldown" />
+            <input class="size-full px-2 lg:box-border lg:py-2" id="cooldown" min={0} placeholder="Cooldown" />
         </div>
     </div>
 
     <div class="flex flex-row gap-2 lg:mb-4 lg:w-full lg:flex-col lg:gap-6">
-        {[1, 2].map(number => (
-            <div class="box-border flex flex-col gap-2 lg:gap-2.5">
-                <span class="box-border px-2 font-bold">Equipment #{number}</span>
+        {
+            [1, 2].map(number => (
+                <div class="box-border flex flex-col gap-2 lg:gap-2.5">
+                    <span class="box-border px-2 font-bold">Equipment #{number}</span>
 
-                <select class="box-border p-2" id={`equipment-selector-${number}`}>
-                    <option disabled selected>
-                        Select equipment...
-                    </option>
-
-                    <!-- FIXME: Resolve type error -->
-                    {namedEquipment.map(entry => (
-                        <option
-                            data-cooldown-reduction={entry.data.cooldownReduction}
-                            data-critical-chance={entry.data.criticalChance}
-                            data-critical-damage={entry.data.criticalDamage}
-                            data-damage={entry.data.damage}
-                            id={entry.id}
-                            value={entry.id}
-                        >
-                            {entry.name}
+                    <select class="box-border p-2" id={`equipment-selector-${number}`}>
+                        <option disabled selected>
+                            Select equipment...
                         </option>
-                    ))}
-                </select>
 
-                <StyledInput id={`damage-${number}`} placeholder="Increased damage" />
-                <StyledInput id={`critical-chance-${number}`} max={100} placeholder="Critical chance" />
-                <StyledInput id={`critical-multiplier-${number}`} placeholder="Critical damage multiplier" />
-                <StyledInput id={`cooldown-reduction-${number}`} max={50} placeholder="Cooldown reduction" />
-            </div>
-        ))}
+                        {namedEquipment.map(entry => (
+                            <option
+                                data-cooldown-reduction={entry.data.cooldownReduction}
+                                data-critical-chance={entry.data.criticalChance}
+                                data-critical-damage={entry.data.criticalDamage}
+                                data-damage={entry.data.damage}
+                                id={entry.id}
+                                value={entry.id}
+                            >
+                                {entry.name}
+                            </option>
+                        ))}
+                    </select>
+
+                    <StyledInput id={`damage-${number}`} placeholder="Increased damage" />
+                    <StyledInput id={`critical-chance-${number}`} max={100} placeholder="Critical chance" />
+                    <StyledInput id={`critical-multiplier-${number}`} placeholder="Critical damage multiplier" />
+                    <StyledInput id={`cooldown-reduction-${number}`} max={50} placeholder="Cooldown reduction" />
+                </div>
+            ))
+        }
     </div>
 
     <span id="output"></span>
