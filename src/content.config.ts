@@ -6,7 +6,7 @@ const equipmentSchema = zod
         cooldownReduction: zod.number().optional(),
         criticalChance: zod.number().positive().optional(),
         criticalDamage: zod.number().positive().optional(),
-        damage: zod.number().positive().optional(),
+        damage: zod.number().optional(),
         range: zod.number().optional(),
     })
     .refine(data => Object.values(data).some(value => value !== undefined), {
