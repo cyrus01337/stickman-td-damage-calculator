@@ -15,6 +15,7 @@ const namedEquipment = await equipment.withNames();
     const EXTRACT_DATA = /^(?<name>[a-z-]+)-(?<index>[12])$/;
     const NO_INDEX = -1;
     const BASE_DAMAGE = document.getElementById("base-damage") as HTMLInputElement;
+    const COOLDOWN = document.getElementById("cooldown") as HTMLInputElement;
 
     interface EquipmentMultiplierElements {
         cooldownReduction: HTMLInputElement;
@@ -38,11 +39,12 @@ const namedEquipment = await equipment.withNames();
         },
     ];
 
-    type Name = "baseDamage" | "cooldownReduction" | "criticalChance" | "criticalDamage" | "damage";
+    type Name = "baseDamage" | "cooldown" | "cooldownReduction" | "criticalChance" | "criticalDamage" | "damage";
     type EquipmentMultiplierDefaults = Record<Name, number>;
 
     const DEFAULTS: EquipmentMultiplierDefaults = {
         baseDamage: 0,
+        cooldown: 1,
         cooldownReduction: 0,
         criticalChance: 0,
         criticalDamage: 0,
@@ -116,7 +118,7 @@ const namedEquipment = await equipment.withNames();
             previousInputs[target.id] = target.value;
 
             return [fallback, index];
-        } else if (result?.name === "cooldownReduction") {
+        } else if (result?.name === "cooldownReduction" || result?.name === "cooldown") {
             if (target.value !== "-" && !isValidNumber(target.value)) {
                 const previousInputFound = previousInputs[target.id];
 
@@ -134,7 +136,7 @@ const namedEquipment = await equipment.withNames();
 
         let parsedNumber = parseFloat(target.value);
 
-        if (result?.name !== "cooldownReduction" && parsedNumber < 0) {
+        if (result?.name !== "cooldownReduction" && result?.name !== "cooldown" && parsedNumber < 0) {
             parsedNumber = Math.abs(parsedNumber);
 
             voidKeypressFor(target);
@@ -162,7 +164,7 @@ const namedEquipment = await equipment.withNames();
     const prettifyNumber = (number: number, places: number) =>
         removeDecimalsIfEquivalent(round(number, places)).toLocaleString("en-GB");
 
-    const applyFormulaTo = (baseDamage: number) => {
+    const applyFormulaTo = (baseDamage: number, cooldown: number) => {
         const attackMultiplier = sum(i);
         const criticalChance = Math.min(sum(c), 1);
         const criticalDamage = sum(d);
@@ -173,13 +175,14 @@ const namedEquipment = await equipment.withNames();
             cooldownReduction = [1, 0];
         }
 
+        const damagePerSecond = baseDamage / (cooldown > 0 ? cooldown : 1);
         const totalDamageMultiplier =
             (1 + attackMultiplier) *
             (criticalChance * (criticalDamage + 1.5) + (1 - criticalChance)) *
             ((1 / (1 - cooldownReduction[0])) * (1 / (1 - cooldownReduction[1])));
-        const prettyTotalDamage = prettifyNumber(baseDamage * totalDamageMultiplier, 1);
-        const prettyTotalDamageMultiplier = prettifyNumber(totalDamageMultiplier * 100, 2);
-        const additiveTotalDamageMultiplier = prettifyNumber((totalDamageMultiplier - 1) * 100, 2);
+        const prettyTotalDPS = prettifyNumber(damagePerSecond * totalDamageMultiplier, 1);
+        const prettyTotalDPSMultiplier = prettifyNumber(totalDamageMultiplier * 100, 2);
+        const additiveTotalDPSMultiplier = prettifyNumber((totalDamageMultiplier - 1) * 100, 2);
 
         // Maintain for future debugging
         // console.log("Attack multiplier:", attackMultiplier);
@@ -188,17 +191,18 @@ const namedEquipment = await equipment.withNames();
         // console.log("Cooldown reduction:", cooldownReduction);
         // console.log("Total damage multiplier:", totalDamageMultiplier);
 
-        return `${prettyTotalDamage} (${prettyTotalDamageMultiplier}% or +${additiveTotalDamageMultiplier}%)`;
+        return `${prettyTotalDPS} (${prettyTotalDPSMultiplier}% or +${additiveTotalDPSMultiplier}%)`;
     };
 
-    const performAndShowCalculation = (target: HTMLInputElement) => {
-        const [damage] = processNewInput(target, DEFAULTS.baseDamage);
+    const performAndShowCalculation = (baseDamageElement: HTMLInputElement, cooldownElement: HTMLInputElement) => {
+        const [damage] = processNewInput(baseDamageElement, DEFAULTS.baseDamage);
+        const [cooldown] = processNewInput(cooldownElement, DEFAULTS.cooldown);
 
-        OUTPUT.textContent = `${applyFormulaTo(damage)}`;
+        OUTPUT.textContent = `${applyFormulaTo(damage, cooldown)}`;
     };
 
-    const displayCalculatedDamage: EventListener = event => {
-        performAndShowCalculation(event.target as HTMLInputElement);
+    const displayCalculatedDamage: EventListener = () => {
+        performAndShowCalculation(BASE_DAMAGE, COOLDOWN);
     };
 
     const trackCooldownReductions: EventListener = event => {
@@ -208,14 +212,14 @@ const namedEquipment = await equipment.withNames();
         );
         s[index - 1] = cooldownReduction / 100;
 
-        performAndShowCalculation(BASE_DAMAGE);
+        performAndShowCalculation(BASE_DAMAGE, COOLDOWN);
     };
 
     const trackCriticalChances: EventListener = event => {
         const [criticalChance, index] = processNewInput(event.target as HTMLInputElement, DEFAULTS.criticalChance);
         c[index] = criticalChance / 100;
 
-        performAndShowCalculation(BASE_DAMAGE);
+        performAndShowCalculation(BASE_DAMAGE, COOLDOWN);
     };
 
     const trackCriticalDamageMultipliers: EventListener = event => {
@@ -225,14 +229,14 @@ const namedEquipment = await equipment.withNames();
         );
         d[index] = criticalDamageMultiplier / 100;
 
-        performAndShowCalculation(BASE_DAMAGE);
+        performAndShowCalculation(BASE_DAMAGE, COOLDOWN);
     };
 
     const trackDamageMultipliers: EventListener = event => {
         const [damageMultiplier, index] = processNewInput(event.target as HTMLInputElement, DEFAULTS.damage);
         i[index] = damageMultiplier / 100;
 
-        performAndShowCalculation(BASE_DAMAGE);
+        performAndShowCalculation(BASE_DAMAGE, COOLDOWN);
     };
 
     const trackEquipmentSelection: EventListener = event => {
@@ -266,10 +270,11 @@ const namedEquipment = await equipment.withNames();
         const [damageMultiplier, damageIndex] = processNewInput(damageInput, DEFAULTS.damage);
         i[damageIndex - 1] = damageMultiplier / 100;
 
-        performAndShowCalculation(BASE_DAMAGE);
+        performAndShowCalculation(BASE_DAMAGE, COOLDOWN);
     };
 
     BASE_DAMAGE.addEventListener("input", displayCalculatedDamage);
+    COOLDOWN.addEventListener("input", displayCalculatedDamage);
 
     for (const multipliers of EQUIPMENT) {
         multipliers.cooldownReduction.addEventListener("input", trackCooldownReductions);
@@ -285,48 +290,54 @@ const namedEquipment = await equipment.withNames();
         selector?.addEventListener("change", trackEquipmentSelection);
     }
 
-    performAndShowCalculation(BASE_DAMAGE);
+    performAndShowCalculation(BASE_DAMAGE, COOLDOWN);
 </script>
 
 <!-- <SharedState namedEquipment={namedEquipment} /> -->
 <Layout class="box-border flex flex-col gap-2 p-4 lg:py-6">
-    <span class="box-border hidden font-bold lg:block">Base damage</span>
-    <!-- TODO: Add cooldown field to calculate a unit's DPS automatically
-    rather than expecting people to calculate it for them -->
-    <input class="px-2 lg:mb-4 lg:box-border lg:py-2" id="base-damage" min={1} placeholder="Base damage" />
+    <div class="flex flex-col gap-2">
+        <div class="grow box-border flex flex-col gap-2">
+            <span class="box-border hidden font-bold lg:block">Base damage</span>
+            <input class="px-2 lg:box-border lg:py-2 size-full" id="base-damage" min={0} placeholder="Base damage" />
+        </div>
+
+        <div class="grow box-border flex flex-col gap-2">
+            <span class="box-border hidden font-bold lg:block">Cooldown</span>
+            <input class="px-2 lg:box-border lg:py-2 size-full" id="cooldown" min={0} placeholder="Cooldown" />
+        </div>
+    </div>
 
     <div class="flex flex-row gap-2 lg:mb-4 lg:w-full lg:flex-col lg:gap-6">
-        {
-            [1, 2].map(number => (
-                <div class="box-border flex flex-col gap-2 lg:gap-2.5">
-                    <span class="box-border px-2 font-bold">Equipment #{number}</span>
+        {[1, 2].map(number => (
+            <div class="box-border flex flex-col gap-2 lg:gap-2.5">
+                <span class="box-border px-2 font-bold">Equipment #{number}</span>
 
-                    <select class="box-border p-2" id={`equipment-selector-${number}`}>
-                        <option disabled selected>
-                            Select equipment...
+                <select class="box-border p-2" id={`equipment-selector-${number}`}>
+                    <option disabled selected>
+                        Select equipment...
+                    </option>
+
+                    <!-- FIXME: Resolve type error -->
+                    {namedEquipment.map(entry => (
+                        <option
+                            data-cooldown-reduction={entry.data.cooldownReduction}
+                            data-critical-chance={entry.data.criticalChance}
+                            data-critical-damage={entry.data.criticalDamage}
+                            data-damage={entry.data.damage}
+                            id={entry.id}
+                            value={entry.id}
+                        >
+                            {entry.name}
                         </option>
+                    ))}
+                </select>
 
-                        {namedEquipment.map(entry => (
-                            <option
-                                data-cooldown-reduction={entry.data.cooldownReduction}
-                                data-critical-chance={entry.data.criticalChance}
-                                data-critical-damage={entry.data.criticalDamage}
-                                data-damage={entry.data.damage}
-                                id={entry.id}
-                                value={entry.id}
-                            >
-                                {entry.name}
-                            </option>
-                        ))}
-                    </select>
-
-                    <StyledInput id={`damage-${number}`} placeholder="Increased damage" />
-                    <StyledInput id={`critical-chance-${number}`} max={100} placeholder="Critical chance" />
-                    <StyledInput id={`critical-multiplier-${number}`} placeholder="Critical damage multiplier" />
-                    <StyledInput id={`cooldown-reduction-${number}`} max={50} placeholder="Cooldown reduction" />
-                </div>
-            ))
-        }
+                <StyledInput id={`damage-${number}`} placeholder="Increased damage" />
+                <StyledInput id={`critical-chance-${number}`} max={100} placeholder="Critical chance" />
+                <StyledInput id={`critical-multiplier-${number}`} placeholder="Critical damage multiplier" />
+                <StyledInput id={`cooldown-reduction-${number}`} max={50} placeholder="Cooldown reduction" />
+            </div>
+        ))}
     </div>
 
     <span id="output"></span>
