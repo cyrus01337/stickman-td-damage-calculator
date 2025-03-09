@@ -6,6 +6,7 @@
         "jsxImportSource": "react",
         "noEmit": true,
         "paths": {
+            "lib/*": ["lib/*"],
             "~/*": ["src/*"]
         },
         "strictNullChecks": true

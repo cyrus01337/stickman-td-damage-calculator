@@ -1,0 +1,70 @@
+---
+import { getCollection } from "astro:content";
+import applyFormulaTo from "lib/apply-formula-to";
+
+import Layout from "~/layouts/base.astro";
+
+const toTitleCase = (text: string) => {
+    const firstLetter = text.slice(0, 1).toUpperCase();
+    const rest = text.slice(1).toLowerCase();
+
+    return firstLetter + rest;
+};
+
+const sum = (numbers: number[]) => numbers.reduce((total, n) => total + n, 0);
+
+const setDefaultFor = (value: number | undefined) => (value && value > 0 ? value / 100 : 0);
+
+// FIXME: Resolve type error
+const namedEquipment = (await getCollection("equipment")).map(equipment => ({
+    ...equipment,
+    name: equipment.id
+        .split("-")
+        .map(word => (word === "of" ? word : toTitleCase(word)))
+        .join(" "),
+}));
+// FIXME: Rename
+const bullshit = namedEquipment
+    .map((outerEntry, index) => [
+        outerEntry.name,
+
+        namedEquipment.slice(index).map(innerEntry => [
+            innerEntry.name,
+
+            applyFormulaTo({
+                attackMultiplier: sum([setDefaultFor(outerEntry?.data.damage), setDefaultFor(innerEntry?.data.damage)]),
+                cooldownReduction: [
+                    setDefaultFor(outerEntry?.data.cooldownReduction),
+                    setDefaultFor(innerEntry?.data.cooldownReduction),
+                ],
+                criticalChance: Math.min(
+                    sum([
+                        setDefaultFor(outerEntry?.data.criticalChance),
+                        setDefaultFor(innerEntry?.data.criticalChance),
+                    ]),
+                    1,
+                ),
+                criticalDamage: sum([
+                    setDefaultFor(outerEntry?.data.criticalDamage),
+                    setDefaultFor(innerEntry?.data.criticalDamage),
+                ]),
+                names: [innerEntry.name, outerEntry.name],
+            })[0],
+        ]),
+    ])
+    .map(outerEntry => outerEntry[1].map(innerEntry => [outerEntry[0], ...innerEntry]))
+    .flat()
+    .sort((a, b) => b[2] - a[2]);
+---
+
+<Layout class="box-border flex flex-col gap-2 p-4 lg:py-6">
+    <div class="flex flex-col">
+        {
+            bullshit.map(entry => (
+                <span>
+                    {entry[0]} + {entry[1]} = {(entry[2] - 100).toLocaleString("en-GB")}%
+                </span>
+            ))
+        }
+    </div>
+</Layout>

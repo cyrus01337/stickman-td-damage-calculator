@@ -197,6 +197,16 @@ const namedEquipment = (await getCollection("equipment")).map(equipment => ({
         const prettyTotalDPSMultiplier = prettifyNumber(totalDamageMultiplier * 100, 2);
         const additiveTotalDPSMultiplier = prettifyNumber((totalDamageMultiplier - 1) * 100, 2);
 
+        console.log(
+            attackMultiplier,
+            criticalChance,
+            criticalDamage,
+            cooldownReduction,
+            totalCooldownReduction,
+            totalDamageMultiplier,
+        );
+        console.log(prettyTotalDPS, prettyTotalDPSMultiplier, additiveTotalDPSMultiplier);
+
         // Maintain for future debugging
         // console.log("Attack multiplier:", attackMultiplier);
         // console.log("Critical chance:", criticalChance);
