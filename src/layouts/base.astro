@@ -59,9 +59,16 @@ const { class: className = null } = Astro.props;
     <body>
         <div class={className}>
             <nav class="box-border flex w-full flex-row justify-between lg:mb-3">
-                <span class="text-2xl font-bold">Stickman TD <br class="hidden lg:block" />Damage Calculator</span>
+                <a class="text-primary hover:text-base-content text-2xl font-bold" href="/stickman-td-damage-calculator"
+                    >Stickman TD <br class="hidden lg:block" />Damage Calculator</a
+                >
 
                 <div class="flex flex-row">
+                    <a
+                        class="text-primary hover:text-base-content pr-4 text-center font-bold transition-colors"
+                        href="/stickman-td-damage-calculator/best-combinations">Best <br />Combinations</a
+                    >
+
                     <ThemeController client:only="react" />
                     <GitHub />
                 </div>
