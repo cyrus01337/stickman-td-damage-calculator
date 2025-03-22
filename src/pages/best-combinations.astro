@@ -15,7 +15,6 @@ const sum = (numbers: number[]) => numbers.reduce((total, n) => total + n, 0);
 
 const setDefaultFor = (value: number | undefined) => (value && value > 0 ? value / 100 : 0);
 
-// FIXME: Resolve type error
 const namedEquipment = (await getCollection("equipment")).map(equipment => ({
     ...equipment,
     name: equipment.id
@@ -24,34 +23,42 @@ const namedEquipment = (await getCollection("equipment")).map(equipment => ({
         .join(" "),
 }));
 const equipmentDataCollectionDescending = namedEquipment
-    .map((outerEntry, index) => [
-        outerEntry.name,
+    .map(
+        (outerEntry, index) =>
+            [
+                outerEntry.name,
 
-        namedEquipment.slice(index).map(innerEntry => [
-            innerEntry.name,
+                namedEquipment.slice(index).map(
+                    innerEntry =>
+                        [
+                            innerEntry.name,
 
-            applyFormulaTo({
-                attackMultiplier: sum([setDefaultFor(outerEntry?.data.damage), setDefaultFor(innerEntry?.data.damage)]),
-                cooldownReduction: [
-                    setDefaultFor(outerEntry?.data.cooldownReduction),
-                    setDefaultFor(innerEntry?.data.cooldownReduction),
-                ],
-                criticalChance: Math.min(
-                    sum([
-                        setDefaultFor(outerEntry?.data.criticalChance),
-                        setDefaultFor(innerEntry?.data.criticalChance),
-                    ]),
-                    1,
+                            applyFormulaTo({
+                                attackMultiplier: sum([
+                                    setDefaultFor(outerEntry?.data.damage),
+                                    setDefaultFor(innerEntry?.data.damage),
+                                ]),
+                                cooldownReduction: [
+                                    setDefaultFor(outerEntry?.data.cooldownReduction),
+                                    setDefaultFor(innerEntry?.data.cooldownReduction),
+                                ],
+                                criticalChance: Math.min(
+                                    sum([
+                                        setDefaultFor(outerEntry?.data.criticalChance),
+                                        setDefaultFor(innerEntry?.data.criticalChance),
+                                    ]),
+                                    1,
+                                ),
+                                criticalDamage: sum([
+                                    setDefaultFor(outerEntry?.data.criticalDamage),
+                                    setDefaultFor(innerEntry?.data.criticalDamage),
+                                ]),
+                            })[0],
+                        ] as [string, number],
                 ),
-                criticalDamage: sum([
-                    setDefaultFor(outerEntry?.data.criticalDamage),
-                    setDefaultFor(innerEntry?.data.criticalDamage),
-                ]),
-                names: [innerEntry.name, outerEntry.name],
-            })[0],
-        ]),
-    ])
-    .map(outerEntry => outerEntry[1].map(innerEntry => [outerEntry[0], ...innerEntry]))
+            ] as [string, [string, number][]],
+    )
+    .map(outerEntry => outerEntry[1].map(innerEntry => [outerEntry[0], ...innerEntry] as [string, string, number]))
     .flat()
     .sort((a, b) => b[2] - a[2]);
 ---
@@ -59,9 +66,9 @@ const equipmentDataCollectionDescending = namedEquipment
 <Layout class="box-border flex flex-col gap-2 p-4 lg:py-6">
     <div class="flex flex-col">
         {
-            equipmentDataCollectionDescending.map(entry => (
+            equipmentDataCollectionDescending.map(([firstName, lastName, totalDamageMultiplier]) => (
                 <span>
-                    {entry[0]} + {entry[1]} = {(entry[2] - 100).toLocaleString("en-GB")}%
+                    {firstName} + {lastName} = {(totalDamageMultiplier - 100).toLocaleString("en-GB")}%
                 </span>
             ))
         }
