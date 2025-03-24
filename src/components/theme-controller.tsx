@@ -43,8 +43,7 @@ export default () => {
 
     const swapTheme = () => {
         const currentTheme = getTheme();
-        const newTheme =
-            (currentTheme === null || currentTheme === LIGHT_THEME) ? DARK_THEME : LIGHT_THEME;
+        const newTheme = currentTheme === null || currentTheme === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
 
         localStorage.setItem("theme", newTheme);
         document.documentElement.setAttribute("data-theme", newTheme);
@@ -52,7 +51,7 @@ export default () => {
 
     return (
         <div className="flex size-11 items-center justify-center">
-            <label className="swap swap-rotate size-9 transition-size duration-300 hover:size-11 active:size-8 lg:size-10 lg:active:size-8">
+            <label className="swap swap-rotate transition-size size-9 duration-300 hover:size-11 active:size-8 lg:size-10 lg:active:size-8">
                 <input
                     className="theme-controller"
                     data-toggle-theme={dataset.togglableThemes}
