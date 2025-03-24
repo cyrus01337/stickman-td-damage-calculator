@@ -5,7 +5,7 @@ import { defineConfig } from "astro/config";
 // https://astro.build/config
 export default defineConfig({
     base: "stickman-td-damage-calculator",
-    integrations: [tailwind(), react()],
+    integrations: [tailwind(), react({ include: ["./src/components/*"] })],
     server: {
         port: 3000,
         host: true,

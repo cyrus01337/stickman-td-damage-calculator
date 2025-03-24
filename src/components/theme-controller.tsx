@@ -1,4 +1,3 @@
-// FIXME: Make it look normal
 import Moon from "~/components/moon";
 import Sun from "~/components/sun";
 
@@ -11,8 +10,8 @@ type SwapClass = "swap-on" | "swap-off";
 interface Dataset {
     moonSwapClassName: SwapClass;
     sunSwapClassName: SwapClass;
-    togglableThemes: string;
     themeToSet: Theme;
+    togglableThemes: string;
 }
 
 const getTheme = () => document.documentElement.dataset.theme as Theme;
