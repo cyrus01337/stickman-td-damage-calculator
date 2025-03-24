@@ -1,8 +1,6 @@
 import damage from "lib/damage";
 import { prettifyNumber, toTitleCase } from "lib/utilities";
 
-// FIXME: Prevent all input fields from being processed when interacting with
-// one input field
 const EXTRACT_DATA = /^(?<name>[a-z-]+)-(?<index>[12])$/;
 const NO_INDEX = -1;
 const BASE_DAMAGE = document.getElementById("base-damage") as HTMLInputElement;
