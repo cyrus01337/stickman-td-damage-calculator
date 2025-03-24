@@ -1,24 +1,8 @@
 ---
 // TODO: Make everything look pretty with Daisy UI
-import { getCollection } from "astro:content";
-
+import equipment from "~/client/equipment";
 import StyledInput from "~/components/styled-input.astro";
 import Layout from "~/layouts/base.astro";
-
-const toTitleCase = (text: string) => {
-    const firstLetter = text.slice(0, 1).toUpperCase();
-    const rest = text.slice(1).toLowerCase();
-
-    return firstLetter + rest;
-};
-
-const namedEquipment = (await getCollection("equipment")).map(equipment => ({
-    ...equipment,
-    name: equipment.id
-        .split("-")
-        .map(word => (word === "of" ? word : toTitleCase(word)))
-        .join(" "),
-}));
 ---
 
 <script src="~/scripts/home.ts"></script>
@@ -48,7 +32,7 @@ const namedEquipment = (await getCollection("equipment")).map(equipment => ({
                             Select equipment...
                         </option>
 
-                        {namedEquipment.map(entry => (
+                        {equipment.NAMED.map(entry => (
                             <option
                                 data-cooldown-reduction={entry.data.cooldownReduction}
                                 data-critical-chance={entry.data.criticalChance}

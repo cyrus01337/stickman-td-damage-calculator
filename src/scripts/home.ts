@@ -1,10 +1,15 @@
-// TODO: Modularise properly
+import damage from "lib/damage";
+import { prettifyNumber, toTitleCase } from "lib/utilities";
+
 // FIXME: Prevent all input fields from being processed when interacting with
 // one input field
 const EXTRACT_DATA = /^(?<name>[a-z-]+)-(?<index>[12])$/;
 const NO_INDEX = -1;
 const BASE_DAMAGE = document.getElementById("base-damage") as HTMLInputElement;
 const COOLDOWN = document.getElementById("cooldown") as HTMLInputElement;
+
+type Name = "baseDamage" | "cooldown" | "cooldownReduction" | "criticalChance" | "criticalDamage" | "damage";
+type EquipmentMultiplierDefaults = Record<Name, number>;
 
 interface EquipmentMultiplierElements {
     cooldownReduction: HTMLInputElement;
@@ -28,10 +33,6 @@ const EQUIPMENT: EquipmentMultiplierElements[] = [
         damage: document.getElementById("damage-2") as HTMLInputElement,
     },
 ];
-
-type Name = "baseDamage" | "cooldown" | "cooldownReduction" | "criticalChance" | "criticalDamage" | "damage";
-type EquipmentMultiplierDefaults = Record<Name, number>;
-
 const DEFAULTS: EquipmentMultiplierDefaults = {
     baseDamage: 0,
     cooldown: 1,
@@ -40,25 +41,17 @@ const DEFAULTS: EquipmentMultiplierDefaults = {
     criticalDamage: 0,
     damage: 0,
 };
-
 const OUTPUT = document.getElementById("output") as HTMLSpanElement;
-const i = [0, 0];
-const c = [0, 0];
-const d = [0, 0];
-const s = [0, 0];
+const i: [number, number] = [0, 0];
+const c: [number, number] = [0, 0];
+const d: [number, number] = [0, 0];
+const s: [number, number] = [0, 0];
 const previousInputs: Record<string, string> = {};
 
 interface ElementDataProfile {
     index: number;
     name: Name;
 }
-
-const toTitleCase = (text: string) => {
-    const firstLetter = text.slice(0, 1).toUpperCase();
-    const rest = text.slice(1).toLowerCase();
-
-    return firstLetter + rest;
-};
 
 const convertIDToName = (id: string) => {
     const fragments = id.split("-");
@@ -109,16 +102,6 @@ const processNewInput = (target: HTMLInputElement, fallback: number): [number, n
         index = result.index;
     }
 
-    if (target.id.startsWith("cooldown-reduction")) {
-        console.log(target.value, isValidNumber(target.value));
-        console.log(
-            isEmpty(target.value),
-            result?.name === "cooldownReduction" || result?.name === "cooldown",
-            target.value !== "-" && !isValidNumber(target.value),
-            !isValidNumber(target.value),
-        );
-    }
-
     if (isEmpty(target.value)) {
         previousInputs[target.id] = target.value;
 
@@ -154,58 +137,25 @@ const processNewInput = (target: HTMLInputElement, fallback: number): [number, n
     return [parsedNumber, index];
 };
 
-const sum = (numbers: number[]) => numbers.reduce((total, n) => total + n, 0);
-
-const removeDecimalsIfEquivalent = (number: number) => {
-    const absoluteNumber = Math.abs(number);
-
-    return number === absoluteNumber ? absoluteNumber : number;
-};
-
-const round = (number: number, places = 0) => {
-    const multiplier = 10 ** places;
-
-    return Math.round(number * multiplier) / multiplier;
-};
-
-const prettifyNumber = (number: number, places: number) =>
-    removeDecimalsIfEquivalent(round(number, places)).toLocaleString("en-GB");
-
-const applyFormulaTo = (baseDamage: number, cooldown: number) => {
-    const attackMultiplier = sum(i);
-    const criticalChance = Math.min(sum(c), 1);
-    const criticalDamage = sum(d);
-    const totalCooldownReduction = sum(s);
-    let cooldownReduction = s;
-
-    if (totalCooldownReduction > 1) {
-        cooldownReduction = [1, 0];
-    }
-
-    const damagePerSecond = baseDamage / (cooldown > 0 ? cooldown : 1);
-    const totalDamageMultiplier =
-        (1 + attackMultiplier) *
-        (criticalChance * (criticalDamage + 1.5) + (1 - criticalChance)) *
-        ((1 / (1 - cooldownReduction[0])) * (1 / (1 - cooldownReduction[1])));
-    const prettyTotalDPS = prettifyNumber(damagePerSecond * totalDamageMultiplier, 1);
-    const prettyTotalDPSMultiplier = prettifyNumber(totalDamageMultiplier * 100, 2);
-    const additiveTotalDPSMultiplier = prettifyNumber((totalDamageMultiplier - 1) * 100, 2);
-
-    // Maintain for future debugging
-    // console.log("Attack multiplier:", attackMultiplier);
-    // console.log("Critical chance:", criticalChance);
-    // console.log("Critical damage:", criticalDamage);
-    // console.log("Cooldown reduction:", cooldownReduction);
-    // console.log("Total damage multiplier:", totalDamageMultiplier);
-
-    return `${prettyTotalDPS} (${prettyTotalDPSMultiplier}% or +${additiveTotalDPSMultiplier}%)`;
-};
-
 const performAndShowCalculation = (baseDamageElement: HTMLInputElement, cooldownElement: HTMLInputElement) => {
-    const [damage] = processNewInput(baseDamageElement, DEFAULTS.baseDamage);
+    const [baseDamage] = processNewInput(baseDamageElement, DEFAULTS.baseDamage);
     const [cooldown] = processNewInput(cooldownElement, DEFAULTS.cooldown);
+    const [damagePerSecond, damageMultiplier] = damage.applyFormulaTo({
+        attackMultipliers: i,
+        baseCooldown: cooldown,
+        cooldownReductionMultipliers: s,
+        criticalChanceMultipliers: c,
+        criticalDamageMultipliers: d,
+        baseDamage,
+    });
+    const prettyDamagePerSecond = prettifyNumber(damagePerSecond, 1);
+    const prettyDamageMultiplier = prettifyNumber(damageMultiplier * 100, 2);
+    // const symbol = Math.sign(damageMultiplier - 1) || "+";
+    // const prettyAdditiveDamageMultiplier = prettifyNumber(Math.abs(damageMultiplier - 1) * 100, 2);
+    const prettyAdditiveDamageMultiplier = prettifyNumber((damageMultiplier - 1) * 100, 2);
 
-    OUTPUT.textContent = `${applyFormulaTo(damage, cooldown)}`;
+    // OUTPUT.textContent = `${prettyDamagePerSecond} (${prettyDamageMultiplier}% or ${symbol}${prettyAdditiveDamageMultiplier}%)`;
+    OUTPUT.textContent = `${prettyDamagePerSecond} (${prettyDamageMultiplier}% or +${prettyAdditiveDamageMultiplier}%)`;
 };
 
 const displayCalculatedDamage: EventListener = () => {

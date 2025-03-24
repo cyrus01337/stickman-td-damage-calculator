@@ -1,74 +1,62 @@
 ---
-import { getCollection } from "astro:content";
-import applyFormulaTo from "lib/apply-formula-to";
-
+import equipment from "~/client/equipment";
 import Layout from "~/layouts/base.astro";
+import damage from "lib/damage";
+import { prettifyNumber, sum } from "lib/utilities";
 
-const toTitleCase = (text: string) => {
-    const firstLetter = text.slice(0, 1).toUpperCase();
-    const rest = text.slice(1).toLowerCase();
+const toPercentageOrZero = (value: number | undefined) => (value && value > 0 ? value / 100 : 0);
 
-    return firstLetter + rest;
-};
+const equipmentDataCollectionDescending = equipment.NAMED.map(
+    (outerEntry, index) =>
+        [
+            outerEntry.name,
 
-const sum = (numbers: number[]) => numbers.reduce((total, n) => total + n, 0);
+            equipment.NAMED.slice(index).map(
+                innerEntry =>
+                    [
+                        innerEntry.name,
 
-const setDefaultFor = (value: number | undefined) => (value && value > 0 ? value / 100 : 0);
-
-const namedEquipment = (await getCollection("equipment")).map(equipment => ({
-    ...equipment,
-    name: equipment.id
-        .split("-")
-        .map(word => (word === "of" ? word : toTitleCase(word)))
-        .join(" "),
-}));
-const equipmentDataCollectionDescending = namedEquipment
-    .map(
-        (outerEntry, index) =>
-            [
-                outerEntry.name,
-
-                namedEquipment.slice(index).map(
-                    innerEntry =>
-                        [
-                            innerEntry.name,
-
-                            applyFormulaTo({
-                                attackMultiplier: sum([
-                                    setDefaultFor(outerEntry?.data.damage),
-                                    setDefaultFor(innerEntry?.data.damage),
+                        damage.calculateMultiplier({
+                            attackMultiplier: sum([
+                                toPercentageOrZero(outerEntry?.data.damage),
+                                toPercentageOrZero(innerEntry?.data.damage),
+                            ]),
+                            cooldownReduction: [
+                                toPercentageOrZero(outerEntry?.data.cooldownReduction),
+                                toPercentageOrZero(innerEntry?.data.cooldownReduction),
+                            ],
+                            criticalChance: Math.min(
+                                sum([
+                                    toPercentageOrZero(outerEntry?.data.criticalChance),
+                                    toPercentageOrZero(innerEntry?.data.criticalChance),
                                 ]),
-                                cooldownReduction: [
-                                    setDefaultFor(outerEntry?.data.cooldownReduction),
-                                    setDefaultFor(innerEntry?.data.cooldownReduction),
-                                ],
-                                criticalChance: Math.min(
-                                    sum([
-                                        setDefaultFor(outerEntry?.data.criticalChance),
-                                        setDefaultFor(innerEntry?.data.criticalChance),
-                                    ]),
-                                    1,
-                                ),
-                                criticalDamage: sum([
-                                    setDefaultFor(outerEntry?.data.criticalDamage),
-                                    setDefaultFor(innerEntry?.data.criticalDamage),
-                                ]),
-                            })[0],
-                        ] as [string, number],
-                ),
-            ] as [string, [string, number][]],
-    )
+                                1,
+                            ),
+                            criticalDamage: sum([
+                                toPercentageOrZero(outerEntry?.data.criticalDamage),
+                                toPercentageOrZero(innerEntry?.data.criticalDamage),
+                            ]),
+                        }),
+                    ] as [string, number],
+            ),
+        ] as [string, [string, number][]],
+)
     .map(outerEntry => outerEntry[1].map(innerEntry => [outerEntry[0], ...innerEntry] as [string, string, number]))
     .flat()
-    .sort((a, b) => b[2] - a[2]);
+    .sort((a, b) => b[2] - a[2])
+    .map(([firstName, lastName, damageMultiplier]) => [
+        firstName,
+        lastName,
+        prettifyNumber((damageMultiplier - 1) * 100, 2),
+    ]);
 ---
 
 <Layout class="box-border flex flex-col gap-2 p-4 lg:py-6">
     <div class="flex flex-col">
         {
-            equipmentDataCollectionDescending.map(([firstName, lastName, totalDamageMultiplier]) => (
+            equipmentDataCollectionDescending.map(([firstName, lastName, damageMultiplier]) => (
                 <span>
-                    {firstName} + {lastName} = {(totalDamageMultiplier - 100).toLocaleString("en-GB")}%
+                    {firstName} + {lastName} = {damageMultiplier}%
                 </span>
             ))
         }
