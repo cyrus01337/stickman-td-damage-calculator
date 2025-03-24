@@ -51,7 +51,7 @@ export default () => {
 
     return (
         <div className="flex size-11 items-center justify-center">
-            <label className="swap swap-rotate transition-size size-9 duration-300 hover:size-11 active:size-8 lg:size-10 lg:active:size-8">
+            <label className="transition-size swap swap-rotate size-9 duration-300 hover:size-11 active:size-8 lg:size-10 lg:active:size-8">
                 <input
                     className="theme-controller"
                     data-toggle-theme={dataset.togglableThemes}
