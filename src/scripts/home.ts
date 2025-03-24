@@ -150,8 +150,8 @@ const performAndShowCalculation = (baseDamageElement: HTMLInputElement, cooldown
     });
     const prettyDamagePerSecond = prettifyNumber(damagePerSecond, 1);
     const prettyDamageMultiplier = prettifyNumber(damageMultiplier * 100, 2);
-    const symbol = Math.sign(damageMultiplier - 1) || "+";
-    const prettyAdditiveDamageMultiplier = prettifyNumber(Math.abs(damageMultiplier - 1) * 100, 2);
+    const symbol = Math.sign(damageMultiplier - 1) === 1 ? "+" : "";
+    const prettyAdditiveDamageMultiplier = prettifyNumber((damageMultiplier - 1) * 100, 2);
 
     OUTPUT.textContent = `${prettyDamagePerSecond} (${prettyDamageMultiplier}% or ${symbol}${prettyAdditiveDamageMultiplier}%)`;
 };
