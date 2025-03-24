@@ -1,5 +1,3 @@
-import process from "process";
-
 import { sum } from "lib/utilities";
 
 interface CalculateDPSMultipliersProperties {
@@ -50,7 +48,7 @@ const applyFormulaTo = (properties: Properties): [DamagePerSecond, DamageMultipl
     const baseDPS = properties.baseDamage / (properties.baseCooldown > 0 ? properties.baseCooldown : 1);
 
     /* eslint-disable no-console */
-    if (process.env.DEBUG) {
+    if (import.meta.env.PUBLIC_DEBUG) {
         console.log("Attack multiplier:", attackMultiplier);
         console.log("Critical chance:", criticalChance);
         console.log("Critical damage:", criticalDamage);

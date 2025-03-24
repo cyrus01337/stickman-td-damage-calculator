@@ -4,7 +4,7 @@
     "version": "0.1.0",
     "scripts": {
         "dev": "astro dev",
-        "debug": "DEBUG=1 astro dev",
+        "debug": "PUBLIC_DEBUG=1 astro dev",
         "start": "astro dev",
         "build": "eslint . && astro build",
         "preview": "astro preview",
