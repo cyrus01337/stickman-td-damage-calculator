@@ -1,3 +1,5 @@
+import process from "process";
+
 import { sum } from "lib/utilities";
 
 interface CalculateDPSMultipliersProperties {
@@ -47,13 +49,15 @@ const applyFormulaTo = (properties: Properties): [DamagePerSecond, DamageMultipl
     });
     const baseDPS = properties.baseDamage / (properties.baseCooldown > 0 ? properties.baseCooldown : 1);
 
-    // TODO: Log depending on environment variable
-    // Maintain for future debugging
-    // console.log("Attack multiplier:", attackMultiplier);
-    // console.log("Critical chance:", criticalChance);
-    // console.log("Critical damage:", criticalDamage);
-    // console.log("Cooldown reduction:", cooldownReduction);
-    // console.log("Total damage multiplier:", totalDamageMultiplier);
+    /* eslint-disable no-console */
+    if (process.env.DEBUG) {
+        console.log("Attack multiplier:", attackMultiplier);
+        console.log("Critical chance:", criticalChance);
+        console.log("Critical damage:", criticalDamage);
+        console.log("Cooldown reduction:", cooldownReduction);
+        console.log("Multiplier:", multiplier);
+    }
+    /* eslint-enable no-console */
 
     return [baseDPS * multiplier, multiplier];
 };
