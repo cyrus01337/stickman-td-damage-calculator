@@ -1,3 +1,4 @@
+// FIXME: Make it look normal
 import Moon from "~/components/moon";
 import Sun from "~/components/sun";
 
