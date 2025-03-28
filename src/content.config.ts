@@ -4,8 +4,8 @@ import { defineCollection, z as zod } from "astro:content";
 const equipmentSchema = zod
     .object({
         cooldownReduction: zod.number().optional(),
-        criticalChance: zod.number().positive().optional(),
-        criticalDamage: zod.number().positive().optional(),
+        criticalChance: zod.number().optional(),
+        criticalDamage: zod.number().optional(),
         damage: zod.number().optional(),
         range: zod.number().optional(),
     })
