@@ -18,23 +18,21 @@ const getTheme = () => document.documentElement.dataset.theme as Theme;
 const createDataset = (): Dataset => {
     const theme = getTheme();
 
-    if (theme === null || theme === DARK_THEME) {
-        return {
-            moonSwapClassName: "swap-off",
-            sunSwapClassName: "swap-on",
-            togglableThemes: `${LIGHT_THEME},${DARK_THEME}`,
-            themeToSet: LIGHT_THEME,
-        };
-    } else if (theme === LIGHT_THEME) {
+    if (theme === LIGHT_THEME) {
         return {
             moonSwapClassName: "swap-on",
             sunSwapClassName: "swap-off",
             togglableThemes: `${DARK_THEME},${LIGHT_THEME}`,
             themeToSet: DARK_THEME,
         };
+    } else {
+        return {
+            moonSwapClassName: "swap-off",
+            sunSwapClassName: "swap-on",
+            togglableThemes: `${LIGHT_THEME},${DARK_THEME}`,
+            themeToSet: LIGHT_THEME,
+        };
     }
-
-    throw new Error(`Illegal theme ${theme} found`);
 };
 
 export default () => {
