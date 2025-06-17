@@ -4,7 +4,9 @@ This tool calculates the total damage and total damage multiplier by following a
 
 ### How do I add new equipment?
 
-If you look at `src/content/equipment`, there are a ton of TOML files that contain data for each piece of equipment. Below is a list of options that can be included:
+For those that are not tech-savvy, you may visit the [issues page](<https://github.com/cyrus01337/stickman-td-damage-calculator/issues>) and request for an equipment to be added.
+
+For those that are tech-savvy, PRs are welcome. `src/content/equipment` is where all equipment are stored as TOML files for endless examples. Below is a list of options that can be included:
 
 ```toml
 cooldownReduction = 100
@@ -22,11 +24,7 @@ criticalDamage = 50
 damage = 100
 ```
 
-<!-- TODO: Create a form that allows users to trivially create PRs -->
-
-For those who are comfortable with tech/are tech-savvy, you can create a PR directly to the repo and I will happily include it, otherwise you may contact me directly and I shall integrate it for you.
-
-There will be a more easy way to submit equipment soon.
+Alternatively, you may contact me directly and I can integrate it for you.
 
 ### Formula
 
