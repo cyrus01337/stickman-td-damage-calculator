@@ -1,5 +1,7 @@
 ---
 import equipment from "~/client/equipment";
+import CombinationFilter from "~/components/combination-filter.tsx";
+import Combinations from "~/components/combinations.tsx";
 import Layout from "~/layouts/base.astro";
 import damage from "lib/damage";
 import { prettifyNumber, sum } from "lib/utilities";
@@ -49,16 +51,10 @@ const equipmentDataCollectionDescending = equipment.NAMED.map(
         lastName,
         prettifyNumber((damageMultiplier - 1) * 100, 2),
     ]);
+const names = equipment.NAMED.map(entry => entry.name);
 ---
 
-<Layout class="box-border flex flex-col gap-2 p-4 lg:py-6">
-    <div class="flex flex-col">
-        {
-            equipmentDataCollectionDescending.map(([firstName, lastName, damageMultiplier]) => (
-                <span>
-                    {firstName} + {lastName} = {damageMultiplier}%
-                </span>
-            ))
-        }
-    </div>
+<Layout appendMainClass="flex-col" class="box-border flex flex-col gap-2 p-4 lg:py-6">
+    <CombinationFilter client:only="react" names={names} />
+    <Combinations client:only="react" equipment={equipmentDataCollectionDescending} />
 </Layout>

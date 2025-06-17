@@ -16,15 +16,18 @@
     "dependencies": {
         "@astrojs/check": "^0.7.0",
         "@astrojs/react": "^4.2.1",
-        "@astrojs/tailwind": "^5.1.0",
+        "@manifoldco/react-select-zero": "^0.0.1",
+        "@nanostores/react": "^1.0.0",
         "@ngdangtu/astro-toml": "^1.0.2",
         "@types/react": "^19.0.12",
         "@types/react-dom": "^19.0.4",
         "astro": "^5.3.0",
         "caniuse-lite": "^1.0.30001699",
+        "nanostores": "^1.0.1",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
-        "tailwindcss": "^3.4.17",
+        "tailwindcss": "^4.1.10",
+        "theme-change": "^2.5.0",
         "typescript": "^5.5.2"
     },
     "devDependencies": {
@@ -32,10 +35,12 @@
         "@fontsource-variable/inter-tight": "^5.0.21",
         "@fsouza/prettierd": "^0.26.1",
         "@ianvs/prettier-plugin-sort-imports": "^4.2.1",
+        "@tailwindcss/vite": "^4.1.10",
+        "@types/bun": "latest",
         "@types/eslint__js": "^8.42.3",
         "@typescript-eslint/parser": "^8.24.0",
         "cssnano": "^7.0.3",
-        "daisyui": "^4.12.24",
+        "daisyui": "^5.0.43",
         "eslint": "^9.5.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-astro": "^1.2.2",
@@ -47,10 +52,8 @@
         "prettier-plugin-astro": "^0.14.0",
         "prettier-plugin-sort-json": "^4.0.0",
         "prettier-plugin-tailwindcss": "^0.6.5",
-        "theme-change": "^2.5.0",
         "tsc-files": "^1.1.4",
-        "typescript-eslint": "^8.0.0-alpha.52",
-        "@types/bun": "latest"
+        "typescript-eslint": "^8.0.0-alpha.52"
     },
     "module": "index.ts",
     "peerDependencies": {

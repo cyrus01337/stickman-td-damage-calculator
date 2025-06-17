@@ -1,0 +1,32 @@
+@import "@manifoldco/react-select-zero/assets/react-select-zero.css";
+@import "tailwindcss";
+
+@plugin "daisyui";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@custom-variant 2xl (@media (max-width: 96rem));
+@custom-variant xl (@media (max-width: 80rem));
+@custom-variant lg (@media (max-width: 64rem));
+@custom-variant md (@media (max-width: 48rem));
+@custom-variant sm (@media (max-width: 40rem));
+
+@theme {
+    --font-inter: "Inter Tight Variable", var(--font-sans);
+    --default-font-family: var(--font-inter);
+}
+
+/* https://github.com/tailwindlabs/tailwindcss/discussions/8185 */
+@utility rendering-pixelated {
+    image-rendering: pixelated;
+}
+
+/* :root { */
+/* } */
+
+.rsz__arrow {
+    display: none !important;
+}
+
+/* .rsz__dropdown { */
+/*     background: var(--) !important; */
+/* } */

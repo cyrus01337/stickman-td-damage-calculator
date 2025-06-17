@@ -25,14 +25,14 @@ const createDataset = (): Dataset => {
             togglableThemes: `${DARK_THEME},${LIGHT_THEME}`,
             themeToSet: DARK_THEME,
         };
-    } else {
-        return {
-            moonSwapClassName: "swap-off",
-            sunSwapClassName: "swap-on",
-            togglableThemes: `${LIGHT_THEME},${DARK_THEME}`,
-            themeToSet: LIGHT_THEME,
-        };
     }
+
+    return {
+        moonSwapClassName: "swap-off",
+        sunSwapClassName: "swap-on",
+        togglableThemes: `${LIGHT_THEME},${DARK_THEME}`,
+        themeToSet: LIGHT_THEME,
+    };
 };
 
 export default () => {
@@ -49,7 +49,7 @@ export default () => {
 
     return (
         <div className="flex size-11 items-center justify-center">
-            <label className="transition-size swap swap-rotate size-9 duration-300 hover:size-11 active:size-8 lg:size-10 lg:active:size-8">
+            <label className="transition-size swap swap-rotate size-9 duration-300 hover:size-11 active:size-8 lg:active:size-8">
                 <input
                     className="theme-controller"
                     data-toggle-theme={dataset.togglableThemes}
