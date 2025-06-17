@@ -4,7 +4,7 @@ This tool calculates the total damage and total damage multiplier by following a
 
 ### How do I add new equipment?
 
-For those that are not tech-savvy, you may visit the [issues page](<https://github.com/cyrus01337/stickman-td-damage-calculator/issues>) and request for an equipment to be added.
+For those that are not tech-savvy, you may create a new issue at [the issues page](<https://github.com/cyrus01337/stickman-td-damage-calculator/issues>) and request for an equipment to be added.
 
 For those that are tech-savvy, PRs are welcome. `src/content/equipment` is where all equipment are stored as TOML files for endless examples. Below is a list of options that can be included:
 
