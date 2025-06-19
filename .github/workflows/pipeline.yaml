@@ -46,7 +46,7 @@ jobs:
 
         steps:
             - name: "Build for production and upload"
-              uses: withastro/action@v2
+              uses: withastro/action@v4
 
     deploy:
         name: "Deploy to GitHub Pages"
