@@ -45,6 +45,9 @@ jobs:
         needs: test
 
         steps:
+            - name: "Checkout repository"
+              uses: actions/checkout@v4
+
             - name: "Build for production and upload"
               uses: withastro/action@v4
               with:
