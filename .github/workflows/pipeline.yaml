@@ -38,7 +38,7 @@ jobs:
     build:
         name: "Build for production"
         runs-on: ubuntu-latest
-        if: github.event_name != "pull_request"
+        if: ${{ github.event_name != "pull_request" }}
         needs: test
 
         steps:
