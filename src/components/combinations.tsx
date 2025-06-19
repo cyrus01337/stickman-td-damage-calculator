@@ -21,7 +21,14 @@ export default (properties: Properties) => {
         <div className="flex flex-col">
             {maybeFiltered.map(([firstName, lastName, damageMultiplier]) => (
                 <span key={`${firstName}-${lastName}`}>
-                    <a className="font-bold link link-secondary transition-colors" onClick={setFilter(firstName)}>{firstName}</a> + <a className="font-bold link link-secondary transition-colors" onClick={setFilter(lastName)}>{lastName}</a> = {damageMultiplier}%
+                    <a className="link link-secondary font-bold transition-colors" onClick={setFilter(firstName)}>
+                        {firstName}
+                    </a>{" "}
+                    +{" "}
+                    <a className="link link-secondary font-bold transition-colors" onClick={setFilter(lastName)}>
+                        {lastName}
+                    </a>{" "}
+                    = {damageMultiplier}%
                 </span>
             ))}
         </div>

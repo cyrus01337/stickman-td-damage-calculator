@@ -11,7 +11,8 @@
         "astro": "astro",
         "format": "prettier --write .",
         "lint": "eslint .",
-        "prepare": "husky"
+        "prepare": "husky",
+        "test": "vitest"
     },
     "dependencies": {
         "@astrojs/check": "^0.7.0",
@@ -52,8 +53,9 @@
         "prettier-plugin-astro": "^0.14.0",
         "prettier-plugin-sort-json": "^4.0.0",
         "prettier-plugin-tailwindcss": "^0.6.5",
-        "tsc-files": "^1.1.4",
-        "typescript-eslint": "^8.0.0-alpha.52"
+        "toml": "^3.0.0",
+        "typescript-eslint": "^8.0.0-alpha.52",
+        "vitest": "^3.2.4"
     },
     "module": "index.ts",
     "peerDependencies": {

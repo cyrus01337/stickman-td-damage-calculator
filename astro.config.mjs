@@ -12,5 +12,12 @@ export default defineConfig({
     site: "https://cyrus01337.github.io",
     vite: {
         plugins: [tailwindcss()],
+        test: {
+            isolate: false,
+            pool: "threads",
+            typecheck: {
+                enabled: true,
+            },
+        },
     },
 });

@@ -1,5 +1,4 @@
 import Select from "@manifoldco/react-select-zero";
-
 import { useStore } from "@nanostores/react";
 
 import { $filterBy } from "~/client/store";
