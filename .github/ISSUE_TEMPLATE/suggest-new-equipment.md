@@ -17,13 +17,19 @@ assignees: cyrus01337
 <!---
     Fill in the stats below
 
-    Note: if the equipment does not have a specific stat, you can remove it.
+    Note: if the equipment does not have a specific stat, remove it.
 -->
 
 ```toml
 cooldownReduction =
 criticalChance =
 criticalDamage =
-damage =
 range =
+
+[damage]
+all =
+blunt =
+chaos =
+stab =
+slash =
 ```

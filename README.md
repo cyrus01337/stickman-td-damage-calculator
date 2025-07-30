@@ -12,16 +12,31 @@ For those that are tech-savvy, PRs are welcome. `src/content/equipment` is where
 cooldownReduction = 100
 criticalChance = 100
 criticalDamage = 100
-damage = 100
 range = 100
+
+[damage]
+all = 100
+blunt = 100
+chaos = 100
+slash = 100
+stab = 100
 ```
 
-Below is an example of Transparent World in TOML form:
+Below is a simple example of how you can define Devote in TOML form:
+
+```toml
+[damage]
+all = 110
+```
+
+...and here is an example of Transparent World in the same format:
 
 ```toml
 criticalChance = 100
 criticalDamage = 50
-damage = 100
+
+[damage]
+chaos = 100
 ```
 
 Alternatively, you may contact me directly and I can integrate it for you.
