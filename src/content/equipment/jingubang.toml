@@ -1,3 +1,5 @@
-damage = 40
-range = 20
 cooldownReduction = 10
+range = 20
+
+[damage]
+blunt = 40

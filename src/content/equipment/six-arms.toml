@@ -1,2 +1,4 @@
-damage = 100
 range = -30
+
+[damage]
+all = 100

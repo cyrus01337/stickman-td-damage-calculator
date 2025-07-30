@@ -1,3 +1,4 @@
 cooldownReduction = 33
 criticalChance = -20
-damage = 100
+[damage]
+all = 100

@@ -1,3 +1,5 @@
-damage = 70
 cooldownReduction = 33
 criticalChance = -100
+
+[damage]
+blunt = 70

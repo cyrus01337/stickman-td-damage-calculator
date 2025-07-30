@@ -1,3 +1,5 @@
-damage = 300
 cooldownReduction = -10
 range = 10
+
+[damage]
+chaos = 300

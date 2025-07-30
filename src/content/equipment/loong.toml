@@ -1,2 +1,4 @@
-damage = 150
 criticalDamage = 100
+
+[damage]
+all = 150

@@ -1,3 +1,5 @@
 criticalChance = 100
-damage = 100
 criticalDamage = 50
+
+[damage]
+chaos = 100

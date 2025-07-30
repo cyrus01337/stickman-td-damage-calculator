@@ -1,0 +1,11 @@
+{
+    "env": {
+        "NODE_ENV": "development"
+    },
+    "execMap": {
+        "astro,ts,tsx": "bun run lint",
+        "toml": "bun run test"
+    },
+    "ext": "astro,toml,ts,tsx",
+    "watch": ["."]
+}

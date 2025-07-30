@@ -1,3 +1,5 @@
-damage = 100
-range = 50
 cooldownReduction = 33
+range = 50
+
+[damage]
+all = 100

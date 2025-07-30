@@ -1,2 +1,4 @@
 cooldownReduction = 30
-damage = -10
+
+[damage]
+all = -10

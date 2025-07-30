@@ -1,2 +1,4 @@
-damage = 30
 criticalDamage = 50
+
+[damage]
+stab = 30

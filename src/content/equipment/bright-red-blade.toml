@@ -1,2 +1,5 @@
-damage = 120
 criticalDamage = 50
+
+[damage]
+chaos = 60
+slash = 60

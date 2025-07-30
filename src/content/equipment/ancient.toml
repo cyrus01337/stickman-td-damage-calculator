@@ -1,1 +1,4 @@
-damage = 70
+[damage]
+slash = 70
+stab = 70
+blunt = 70

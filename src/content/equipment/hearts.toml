@@ -1,2 +1,4 @@
 range = 60
-damage = 60
+
+[damage]
+stab = 60

@@ -1,4 +1,4 @@
 cooldownReduction = 20
 
 [damage]
-all = 250
+blunt = 30

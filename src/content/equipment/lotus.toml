@@ -1,2 +1,5 @@
 cooldownReduction = -20
-damage = 70
+
+[damage]
+blunt = 70
+chaos = 70

@@ -1,1 +1,4 @@
-damage = 220
+[damage]
+all = 110
+blunt = 110
+slash = 110

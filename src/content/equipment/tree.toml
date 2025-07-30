@@ -1,3 +1,5 @@
-damage = 70
 criticalChance = 50
 criticalDamage = 70
+
+[damage]
+all = 70

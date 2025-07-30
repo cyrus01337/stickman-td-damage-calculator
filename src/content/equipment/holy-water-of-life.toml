@@ -1,2 +1,4 @@
 cooldownReduction = 33
-damage = 200
+
+[damage]
+slash = 200

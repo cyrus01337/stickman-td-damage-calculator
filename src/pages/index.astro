@@ -36,9 +36,13 @@ import Layout from "~/layouts/base.astro";
                                 data-cooldown-reduction={entry.data.cooldownReduction}
                                 data-critical-chance={entry.data.criticalChance}
                                 data-critical-damage={entry.data.criticalDamage}
-                                data-damage={entry.data.damage}
-                                id={entry.id}
-                                value={entry.id}
+                                data-damage-all={entry.data.damage?.all}
+                                data-damage-blunt={entry.data.damage?.blunt}
+                                data-damage-chaos={entry.data.damage?.chaos}
+                                data-damage-slash={entry.data.damage?.slash}
+                                data-damage-stab={entry.data.damage?.stab}
+                                id={`${entry.id}-${number}`}
+                                value={`${entry.id}-${number}`}
                             >
                                 {entry.name}
                             </option>
@@ -54,5 +58,5 @@ import Layout from "~/layouts/base.astro";
         }
     </div>
 
-    <span id="output"></span>
+    <p class="whitespace-pre-line" id="output"></p>
 </Layout>

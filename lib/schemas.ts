@@ -1,13 +1,27 @@
 import { z as zod } from "zod";
 
 const EQUIPMENT = zod
-    .object({
-        cooldownReduction: zod.number().optional(),
-        criticalChance: zod.number().optional(),
-        criticalDamage: zod.number().optional(),
-        damage: zod.number().optional(),
-        range: zod.number().optional(),
+    .strictObject({
+        cooldownReduction: zod.number(),
+        criticalChance: zod.number(),
+        criticalDamage: zod.number(),
+        damage: zod
+            .strictObject({
+                all: zod.number(),
+                blunt: zod.number(),
+                chaos: zod.number(),
+                slash: zod.number(),
+                stab: zod.number(),
+            })
+            .partial()
+            .optional()
+            .refine(data => (data ? Object.values(data).some(value => value !== undefined) : true), {
+                message: "At least one field must be provided if supplying damage",
+                path: [],
+            }),
+        range: zod.number(),
     })
+    .partial()
     .refine(data => Object.values(data).some(value => value !== undefined), {
         message: "At least one field must be provided",
         path: [],

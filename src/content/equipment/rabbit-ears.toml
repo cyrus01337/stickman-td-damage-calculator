@@ -1,2 +1,4 @@
 criticalChance = 30
-damage = 150
+
+[damage]
+all = 150
