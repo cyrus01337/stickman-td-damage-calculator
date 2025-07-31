@@ -27,22 +27,10 @@ stab = 100
 umbral = 100
 ```
 
-Below is a simple example of how you can define Devote in TOML form:
-
-```toml
-[damage]
-all = 110
-```
-
-...and here is an example of Transparent World in the same format:
-
-```toml
-criticalChance = 100
-criticalDamage = 50
-
-[damage]
-chaos = 100
-```
+Below are examples for how certain stats are represented in TOML form:
+- [Devote](https://github.com/cyrus01337/stickman-td-damage-calculator/blob/main/src/content/equipment/devote.toml)
+- [Transparent World](https://github.com/cyrus01337/stickman-td-damage-calculator/blob/main/src/content/equipment/transparent-world.toml)
+- [Reaper](https://github.com/cyrus01337/stickman-td-damage-calculator/blob/main/src/content/equipment/reaper.toml)
 
 Alternatively, you may contact me directly and I can integrate it for you.
 
