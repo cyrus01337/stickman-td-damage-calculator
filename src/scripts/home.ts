@@ -20,17 +20,39 @@ interface DamageDataset extends Record<string, number | undefined> {
     all: number;
     blunt: number;
     chaos: number;
+    elements: number;
+    extra: number;
+    fire: number;
+    frost: number;
+    radiant: number;
     slash: number;
     stab: number;
-    extra: number;
+    umbral: number;
 }
 
-const createDamageDataset = (all_ = 0, blunt = 0, chaos = 0, slash = 0, stab = 0, extra = 0): DamageDataset => ({
+const createDamageDataset = (
+    all_ = 0,
+    blunt = 0,
+    chaos = 0,
+    elements = 0,
+    fire = 0,
+    frost = 0,
+    radiant = 0,
+    slash = 0,
+    stab = 0,
+    umbral = 0,
+    extra = 0,
+): DamageDataset => ({
     all: all_,
     blunt: all_ + blunt,
     chaos: all_ + chaos,
+    elements: all_ + elements,
+    fire: all_ + elements + fire,
+    frost: all_ + elements + frost,
+    radiant: all_ + elements + radiant,
     slash: all_ + slash,
     stab: all_ + stab,
+    umbral: all_ + elements + umbral,
     extra,
 });
 
@@ -136,8 +158,13 @@ function processNewInput(
                 target.dataset?.damageAll ? parseInt(target.dataset.damageAll) : 0,
                 target.dataset?.damageBlunt ? parseInt(target.dataset.damageBlunt) : 0,
                 target.dataset?.damageChaos ? parseInt(target.dataset.damageChaos) : 0,
+                target.dataset?.damageElements ? parseInt(target.dataset.damageElements) : 0,
+                target.dataset?.damageFire ? parseInt(target.dataset.damageFire) : 0,
+                target.dataset?.damageFrost ? parseInt(target.dataset.damageFrost) : 0,
+                target.dataset?.damageRadiant ? parseInt(target.dataset.damageRadiant) : 0,
                 target.dataset?.damageSlash ? parseInt(target.dataset.damageSlash) : 0,
                 target.dataset?.damageStab ? parseInt(target.dataset.damageStab) : 0,
+                target.dataset?.damageUmbral ? parseInt(target.dataset.damageUmbral) : 0,
                 oldDataset.extra,
             ),
             index,

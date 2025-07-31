@@ -1,0 +1,5 @@
+cooldownReduction = 40
+range = 70
+
+[damage]
+chaos = 100

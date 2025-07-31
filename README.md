@@ -18,8 +18,13 @@ range = 100
 all = 100
 blunt = 100
 chaos = 100
+elements = 100
+fire = 100
+frost = 100
+radiant = 100
 slash = 100
 stab = 100
+umbral = 100
 ```
 
 Below is a simple example of how you can define Devote in TOML form:
@@ -43,6 +48,8 @@ Alternatively, you may contact me directly and I can integrate it for you.
 
 ### Formula
 
+**Note:** Berserker does not fully abide by this formula, keep this in mind when factoring in his elemental damage
+
 $$
-(1 + a) * (c^c * (c^d + 1.5) + (1 - c^c)) * ((1 / (1 - c^r_1)) * (1 / (1 - c^r_2)))
+(1 + ae) * (c^c * (c^d + 1.5) + (1 - c^c)) * ((1 / (1 - c^r_1)) * (1 / (1 - c^r_2)))
 $$

@@ -10,8 +10,13 @@ const EQUIPMENT = zod
                 all: zod.number(),
                 blunt: zod.number(),
                 chaos: zod.number(),
+                elements: zod.number(),
+                fire: zod.number(),
+                frost: zod.number(),
+                radiant: zod.number(),
                 slash: zod.number(),
                 stab: zod.number(),
+                umbral: zod.number(),
             })
             .partial()
             .optional()
