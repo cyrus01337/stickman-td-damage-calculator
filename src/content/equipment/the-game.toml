@@ -1,0 +1,6 @@
+criticalChance = 30
+cooldownReduction = 20
+range = 20
+
+[damage]
+all = 150
