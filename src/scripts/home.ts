@@ -215,11 +215,7 @@ const performAndShowCalculation = (baseDamageElement: HTMLInputElement, cooldown
     const [cooldown] = processNewInput(cooldownElement, DEFAULTS.cooldown);
 
     for (const damageType of Object.keys(initialDamageDataset)) {
-        const inapplicableDamageMultipliersFound = damageMultipliers
-            .map(dataset => (dataset[damageType] as number) + dataset.extra)
-            .every(multiplier => multiplier === 0);
-
-        if (damageType === "extra" || inapplicableDamageMultipliersFound) {
+        if (damageType === "extra") {
             continue;
         }
 
