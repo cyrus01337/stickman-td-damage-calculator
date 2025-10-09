@@ -6,43 +6,41 @@ import Layout from "~/layouts/base.astro";
 import damage from "lib/damage";
 import { prettifyNumber, sum } from "lib/utilities";
 
-const toPercentageOrZero = (value: number | undefined) => (value && value > 0) ? value / 100 : 0;
+const toPercentageOrZero = (value: number | undefined) => (value && value > 0 ? value / 100 : 0);
 
-const equipmentDataCollectionDescending = equipment.NAMED.map(
-    (outerEntry, index) =>
-        [
-            outerEntry.name,
+const equipmentDataCollectionDescending = equipment.NAMED.map((outerEntry, index) => [
+    outerEntry.name,
 
-            equipment.NAMED.slice(index).map(
-                innerEntry =>
-                    [
-                        innerEntry.name,
+    equipment.NAMED.slice(index).map(
+        innerEntry =>
+            [
+                innerEntry.name,
 
-                        damage.calculateMultiplier({
-                            attackMultiplier: sum([
-                                toPercentageOrZero(outerEntry?.data.damage),
-                                toPercentageOrZero(innerEntry?.data.damage),
-                            ]),
-                            cooldownReduction: [
-                                toPercentageOrZero(outerEntry?.data.cooldownReduction),
-                                toPercentageOrZero(innerEntry?.data.cooldownReduction),
-                            ],
-                            criticalChance: Math.min(
-                                sum([
-                                    toPercentageOrZero(outerEntry?.data.criticalChance),
-                                    toPercentageOrZero(innerEntry?.data.criticalChance),
-                                ]),
-                                1,
-                            ),
-                            criticalDamage: sum([
-                                toPercentageOrZero(outerEntry?.data.criticalDamage),
-                                toPercentageOrZero(innerEntry?.data.criticalDamage),
-                            ]),
-                        }),
-                    ] satisfies [string, number],
-            ),
-        ])
-    .reduce((reduced, entry) => [...reduced, [entry[0], ...entry[1]]], []) as [string, string, number]
+                damage.calculateMultiplier({
+                    attackMultiplier: sum([
+                        toPercentageOrZero(outerEntry?.data.damage),
+                        toPercentageOrZero(innerEntry?.data.damage),
+                    ]),
+                    cooldownReduction: [
+                        toPercentageOrZero(outerEntry?.data.cooldownReduction),
+                        toPercentageOrZero(innerEntry?.data.cooldownReduction),
+                    ],
+                    criticalChance: Math.min(
+                        sum([
+                            toPercentageOrZero(outerEntry?.data.criticalChance),
+                            toPercentageOrZero(innerEntry?.data.criticalChance),
+                        ]),
+                        1,
+                    ),
+                    criticalDamage: sum([
+                        toPercentageOrZero(outerEntry?.data.criticalDamage),
+                        toPercentageOrZero(innerEntry?.data.criticalDamage),
+                    ]),
+                }),
+            ] satisfies [string, number],
+    ),
+])
+    .reduce((reduced, entry) => [...reduced, [entry[0], ...entry[1]]], [])
     .filter(entry => parseFloat(entry[2]) - 1 > 0)
     .sort((a, b) => b[2] - a[2])
     .map(([firstName, lastName, damageMultiplier]) => [
